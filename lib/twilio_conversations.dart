@@ -4,4 +4,12 @@ class TwilioConversations {
   Future<bool?> initClient(String token) {
     return TwilioConversationsPlatform.instance.initClient(token);
   }
+
+  Future<List?> myConversations(String token) {
+    return TwilioConversationsPlatform.instance.myConversations();
+  }
+
+  Stream<int> getTwilioConversationsStream() {
+    return TwilioConversationsPlatform.instance.getTwilioConversationsStream();
+  }
 }

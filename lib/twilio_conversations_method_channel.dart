@@ -9,9 +9,24 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
   @visibleForTesting
   final methodChannel = const MethodChannel('twilio_conversations');
 
+  @visibleForTesting
+  final eventChannel = const EventChannel('twilio_conversations_stream');
+
   @override
   Future<bool?> initClient(String token) async {
-    final result = await methodChannel.invokeMethod<bool>('initClient', {'token': token});
+    final result =
+        await methodChannel.invokeMethod<bool>('initClient', {'token': token});
     return result;
+  }
+
+  @override
+  Future<List?> myConversations() async {
+    final result = await methodChannel.invokeMethod<List>('myConversations');
+    return result;
+  }
+
+  @override
+  Stream<int> getTwilioConversationsStream() {
+    return eventChannel.receiveBroadcastStream().cast();
   }
 }

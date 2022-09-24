@@ -27,4 +27,13 @@ abstract class TwilioConversationsPlatform extends PlatformInterface {
   Future<bool?> initClient(String token) {
     throw UnimplementedError('initClient() has not been implemented.');
   }
+
+  Future<List?> myConversations() {
+    throw UnimplementedError('myConversations() has not been implemented.');
+  }
+
+  Stream<int> getTwilioConversationsStream() {
+    throw UnimplementedError(
+        'getTwilioConversationsStream() has not been implemented.');
+  }
 }
