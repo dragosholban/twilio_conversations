@@ -24,11 +24,7 @@ abstract class TwilioConversationsPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
-  }
-
-  Future<bool?> initClient() {
+  Future<bool?> initClient(String token) {
     throw UnimplementedError('initClient() has not been implemented.');
   }
 }

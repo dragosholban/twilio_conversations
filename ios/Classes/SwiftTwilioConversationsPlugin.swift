@@ -12,18 +12,19 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        if (call.method == "initClient") {
-            
-            
+        switch (call.method) {
+        case "initClient":
+            let arguments = call.arguments as! [String: Any]
+            let token = arguments["token"] as! String
             // Set up Twilio Conversations client
-            TwilioConversationsClient.conversationsClient(withToken: "token",
+            TwilioConversationsClient.conversationsClient(withToken: token,
                                                           properties: nil,
                                                           delegate: self) { (initResult, client) in
                 self.client = client
                 result(initResult.isSuccessful)
             }
-        } else {
-            result("iOS " + UIDevice.current.systemVersion)
+        default:
+            result(FlutterMethodNotImplemented)
         }
     }
 }

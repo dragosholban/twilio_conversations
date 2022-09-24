@@ -10,15 +10,8 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
   final methodChannel = const MethodChannel('twilio_conversations');
 
   @override
-  Future<String?> getPlatformVersion() async {
-    final version =
-        await methodChannel.invokeMethod<String>('getPlatformVersion');
-    return version;
-  }
-
-  @override
-  Future<bool?> initClient() async {
-    final result = await methodChannel.invokeMethod<bool>('initClient');
+  Future<bool?> initClient(String token) async {
+    final result = await methodChannel.invokeMethod<bool>('initClient', {'token': token});
     return result;
   }
 }
