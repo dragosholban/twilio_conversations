@@ -9,6 +9,7 @@ import com.twilio.util.ErrorInfo
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -31,11 +32,15 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
     private var result: Result? = null
 
     private var conversationsClient: ConversationsClient? = null
+    private var conversationsStreamHandler = TwilioConversationsStreamHandler()
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "twilio_conversations")
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
+
+        val myEventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "twilio_conversations_stream")
+        myEventChannel.setStreamHandler(conversationsStreamHandler)
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -65,7 +70,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
         object : CallbackListener<ConversationsClient> {
             override fun onSuccess(conversationsClient: ConversationsClient) {
                 this@TwilioConversationsPlugin.conversationsClient = conversationsClient
-                // conversationsClient.addListener(this@TwilioConversationsPlugin.mConversationsClientListener)
+                conversationsClient.addListener(this@TwilioConversationsPlugin.mConversationsClientListener)
                 Log.d(TAG, "Success creating Twilio Conversations Client")
                 this@TwilioConversationsPlugin.result?.success(true)
             }
@@ -82,41 +87,42 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
     private val mConversationsClientListener: ConversationsClientListener =
         object : ConversationsClientListener {
             override fun onConversationAdded(conversation: Conversation?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onConversationUpdated(
                 conversation: Conversation?,
                 reason: Conversation.UpdateReason?
             ) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onConversationDeleted(conversation: Conversation?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onConversationSynchronizationChange(conversation: Conversation?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onError(errorInfo: ErrorInfo?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onUserUpdated(user: User?, reason: User.UpdateReason?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onUserSubscribed(user: User?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onUserUnsubscribed(user: User?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onClientSynchronization(synchronizationStatus: ConversationsClient.SynchronizationStatus) {
+                conversationsStreamHandler.sink?.success(synchronizationStatus.value)
                 if (synchronizationStatus == ConversationsClient.SynchronizationStatus.COMPLETED) {
                     // loadChannels()
                 }
@@ -127,35 +133,35 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                 messageSid: String?,
                 messageIndex: Long
             ) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onAddedToConversationNotification(conversationSid: String?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onRemovedFromConversationNotification(conversationSid: String?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onNotificationSubscribed() {
-                TODO("Not yet implemented")
+
             }
 
             override fun onNotificationFailed(errorInfo: ErrorInfo?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onConnectionStateChange(state: ConversationsClient.ConnectionState?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onTokenExpired() {
-                TODO("Not yet implemented")
+
             }
 
             override fun onTokenAboutToExpire() {
-                TODO("Not yet implemented")
+
             }
         }
 
