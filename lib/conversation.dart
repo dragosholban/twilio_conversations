@@ -8,6 +8,8 @@ class Conversation with _$Conversation {
   const factory Conversation({
     required String sid,
     String? friendlyName,
+    String? lastMessageDate,
+    int? lastMessageIndex,
   }) = _Conversation;
 
   factory Conversation.fromJson(Map<String, dynamic> json) =>

@@ -28,13 +28,31 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                 result(initResult.isSuccessful)
             }
         case "myConversations":
-            var conversations: [[String: String?]] = []
+            var conversations: [[String: Any?]] = []
             
             for  conversation in client?.myConversations() ?? [] {
-                conversations.append(["sid": conversation.sid, "friendlyName": conversation.friendlyName])
+                conversations.append(["sid": conversation.sid, "friendlyName": conversation.friendlyName, "lastMessageDate": conversation.lastMessageDate?.ISO8601Format(), "lastMessageIndex": conversation.lastMessageIndex])
             }
             
             result(conversations)
+        case "getMessageByIndex":
+            let arguments = call.arguments as! [String: Any]
+            let sid = arguments["sid"] as! String
+            let index = arguments["index"] as! Int
+            
+            client?.conversation(withSidOrUniqueName: sid) {(r, conversation) in
+                if (r.isSuccessful) {
+                    conversation?.message(withIndex: NSNumber(value: index)) { (r, message) in
+                        if(r.isSuccessful) {
+                            result(message?.body)
+                        } else {
+                            result(nil)
+                        }
+                    }
+                } else {
+                    result(nil)
+                }
+            }
         default:
             result(FlutterMethodNotImplemented)
         }

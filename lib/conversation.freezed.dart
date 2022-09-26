@@ -22,6 +22,8 @@ Conversation _$ConversationFromJson(Map<String, dynamic> json) {
 mixin _$Conversation {
   String get sid => throw _privateConstructorUsedError;
   String? get friendlyName => throw _privateConstructorUsedError;
+  String? get lastMessageDate => throw _privateConstructorUsedError;
+  int? get lastMessageIndex => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -34,7 +36,11 @@ abstract class $ConversationCopyWith<$Res> {
   factory $ConversationCopyWith(
           Conversation value, $Res Function(Conversation) then) =
       _$ConversationCopyWithImpl<$Res>;
-  $Res call({String sid, String? friendlyName});
+  $Res call(
+      {String sid,
+      String? friendlyName,
+      String? lastMessageDate,
+      int? lastMessageIndex});
 }
 
 /// @nodoc
@@ -49,6 +55,8 @@ class _$ConversationCopyWithImpl<$Res> implements $ConversationCopyWith<$Res> {
   $Res call({
     Object? sid = freezed,
     Object? friendlyName = freezed,
+    Object? lastMessageDate = freezed,
+    Object? lastMessageIndex = freezed,
   }) {
     return _then(_value.copyWith(
       sid: sid == freezed
@@ -59,6 +67,14 @@ class _$ConversationCopyWithImpl<$Res> implements $ConversationCopyWith<$Res> {
           ? _value.friendlyName
           : friendlyName // ignore: cast_nullable_to_non_nullable
               as String?,
+      lastMessageDate: lastMessageDate == freezed
+          ? _value.lastMessageDate
+          : lastMessageDate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastMessageIndex: lastMessageIndex == freezed
+          ? _value.lastMessageIndex
+          : lastMessageIndex // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -70,7 +86,11 @@ abstract class _$$_ConversationCopyWith<$Res>
           _$_Conversation value, $Res Function(_$_Conversation) then) =
       __$$_ConversationCopyWithImpl<$Res>;
   @override
-  $Res call({String sid, String? friendlyName});
+  $Res call(
+      {String sid,
+      String? friendlyName,
+      String? lastMessageDate,
+      int? lastMessageIndex});
 }
 
 /// @nodoc
@@ -88,6 +108,8 @@ class __$$_ConversationCopyWithImpl<$Res>
   $Res call({
     Object? sid = freezed,
     Object? friendlyName = freezed,
+    Object? lastMessageDate = freezed,
+    Object? lastMessageIndex = freezed,
   }) {
     return _then(_$_Conversation(
       sid: sid == freezed
@@ -98,6 +120,14 @@ class __$$_ConversationCopyWithImpl<$Res>
           ? _value.friendlyName
           : friendlyName // ignore: cast_nullable_to_non_nullable
               as String?,
+      lastMessageDate: lastMessageDate == freezed
+          ? _value.lastMessageDate
+          : lastMessageDate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastMessageIndex: lastMessageIndex == freezed
+          ? _value.lastMessageIndex
+          : lastMessageIndex // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -105,7 +135,11 @@ class __$$_ConversationCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$_Conversation implements _Conversation {
-  const _$_Conversation({required this.sid, this.friendlyName});
+  const _$_Conversation(
+      {required this.sid,
+      this.friendlyName,
+      this.lastMessageDate,
+      this.lastMessageIndex});
 
   factory _$_Conversation.fromJson(Map<String, dynamic> json) =>
       _$$_ConversationFromJson(json);
@@ -114,10 +148,14 @@ class _$_Conversation implements _Conversation {
   final String sid;
   @override
   final String? friendlyName;
+  @override
+  final String? lastMessageDate;
+  @override
+  final int? lastMessageIndex;
 
   @override
   String toString() {
-    return 'Conversation(sid: $sid, friendlyName: $friendlyName)';
+    return 'Conversation(sid: $sid, friendlyName: $friendlyName, lastMessageDate: $lastMessageDate, lastMessageIndex: $lastMessageIndex)';
   }
 
   @override
@@ -127,7 +165,11 @@ class _$_Conversation implements _Conversation {
             other is _$_Conversation &&
             const DeepCollectionEquality().equals(other.sid, sid) &&
             const DeepCollectionEquality()
-                .equals(other.friendlyName, friendlyName));
+                .equals(other.friendlyName, friendlyName) &&
+            const DeepCollectionEquality()
+                .equals(other.lastMessageDate, lastMessageDate) &&
+            const DeepCollectionEquality()
+                .equals(other.lastMessageIndex, lastMessageIndex));
   }
 
   @JsonKey(ignore: true)
@@ -135,7 +177,9 @@ class _$_Conversation implements _Conversation {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(sid),
-      const DeepCollectionEquality().hash(friendlyName));
+      const DeepCollectionEquality().hash(friendlyName),
+      const DeepCollectionEquality().hash(lastMessageDate),
+      const DeepCollectionEquality().hash(lastMessageIndex));
 
   @JsonKey(ignore: true)
   @override
@@ -153,7 +197,9 @@ class _$_Conversation implements _Conversation {
 abstract class _Conversation implements Conversation {
   const factory _Conversation(
       {required final String sid,
-      final String? friendlyName}) = _$_Conversation;
+      final String? friendlyName,
+      final String? lastMessageDate,
+      final int? lastMessageIndex}) = _$_Conversation;
 
   factory _Conversation.fromJson(Map<String, dynamic> json) =
       _$_Conversation.fromJson;
@@ -162,6 +208,10 @@ abstract class _Conversation implements Conversation {
   String get sid;
   @override
   String? get friendlyName;
+  @override
+  String? get lastMessageDate;
+  @override
+  int? get lastMessageIndex;
   @override
   @JsonKey(ignore: true)
   _$$_ConversationCopyWith<_$_Conversation> get copyWith =>

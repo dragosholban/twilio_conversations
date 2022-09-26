@@ -14,10 +14,16 @@ class TwilioConversations {
       conversations.add(Conversation(
         sid: item['sid'],
         friendlyName: item['friendlyName'],
+        lastMessageDate: item['lastMessageDate'],
+        lastMessageIndex: item['lastMessageIndex'],
       ));
     }
 
     return conversations;
+  }
+
+  Future<String?> getMessageByIndex(String sid, int index) {
+    return TwilioConversationsPlatform.instance.getMessageByIndex(sid, index);
   }
 
   Stream<Map> getTwilioConversationsStream() {

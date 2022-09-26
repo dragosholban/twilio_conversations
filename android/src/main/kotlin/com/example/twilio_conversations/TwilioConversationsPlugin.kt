@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.NonNull
 import com.twilio.conversations.*
+import com.twilio.conversations.extensions.getConversation
 import com.twilio.util.ErrorInfo
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -14,6 +15,11 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.time.format.DateTimeFormatter
 
 
 /** TwilioConversationsPlugin */
@@ -34,12 +40,16 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
     private var conversationsClient: ConversationsClient? = null
     private var conversationsStreamHandler = TwilioConversationsStreamHandler()
 
+    // The scope for the UI thread
+    private val mainScope = CoroutineScope(Dispatchers.Main)
+
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "twilio_conversations")
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
 
-        val myEventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "twilio_conversations_stream")
+        val myEventChannel =
+            EventChannel(flutterPluginBinding.binaryMessenger, "twilio_conversations_stream")
         myEventChannel.setStreamHandler(conversationsStreamHandler)
     }
 
@@ -53,12 +63,34 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                 ConversationsClient.create(context, token, props, mConversationsClientCallback)
             }
             "myConversations" -> {
-                val conversations = emptyList<HashMap<String, String>>().toMutableList()
+                val conversations = emptyList<HashMap<String, Any?>>().toMutableList()
                 conversationsClient?.myConversations?.forEach {
-                    conversations += hashMapOf(Pair("sid", it.sid), Pair("friendlyName", it.friendlyName))
+                    conversations += hashMapOf(
+                        Pair("sid", it.sid),
+                        Pair("friendlyName", it.friendlyName),
+                        Pair("lastMessageDate", it.lastMessageDate?.toString()),
+                        Pair("lastMessageIndex", it.lastMessageIndex)
+                    )
                 }
 
                 result.success(conversations)
+            }
+            "getMessageByIndex" -> {
+                val sid = call.argument<String>("sid") ?: ""
+                val index = call.argument<Int>("index")
+
+                mainScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val conversation = conversationsClient?.getConversation(sid)
+                        index?.let { index ->
+                            conversation?.getMessageByIndex(
+                                index.toLong(),
+                                CallbackListener<Message>() {
+                                    result.success(it.body)
+                                })
+                        }
+                    }
+                }
             }
             else -> {
                 result.notImplemented()

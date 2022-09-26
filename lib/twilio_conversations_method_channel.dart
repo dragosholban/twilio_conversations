@@ -29,4 +29,15 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
   Stream<Map> getTwilioConversationsStream() {
     return eventChannel.receiveBroadcastStream().cast();
   }
+
+  @override
+  Future<String?> getMessageByIndex(String sid, int index) async {
+    final result =
+        await methodChannel.invokeMethod<String?>('getMessageByIndex', {
+      'sid': sid,
+      'index': index,
+    });
+
+    return result;
+  }
 }
