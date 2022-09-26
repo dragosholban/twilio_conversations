@@ -32,7 +32,7 @@ abstract class TwilioConversationsPlatform extends PlatformInterface {
     throw UnimplementedError('myConversations() has not been implemented.');
   }
 
-  Stream<int> getTwilioConversationsStream() {
+  Stream<Map> getTwilioConversationsStream() {
     throw UnimplementedError(
         'getTwilioConversationsStream() has not been implemented.');
   }

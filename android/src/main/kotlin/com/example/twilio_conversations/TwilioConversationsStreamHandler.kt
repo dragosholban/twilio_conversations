@@ -1,8 +1,8 @@
 package com.example.twilio_conversations
 
 import io.flutter.plugin.common.EventChannel
-import java.util.*
 import android.os.Handler
+import android.os.Looper
 
 class TwilioConversationsStreamHandler: EventChannel.StreamHandler {
     var sink: EventChannel.EventSink? = null
@@ -13,7 +13,7 @@ class TwilioConversationsStreamHandler: EventChannel.StreamHandler {
 
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         sink = events
-        handler = Handler()
+        handler = Handler(Looper.getMainLooper())
         handler?.post(runnable)
     }
 

@@ -26,7 +26,7 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
   }
 
   @override
-  Stream<int> getTwilioConversationsStream() {
+  Stream<Map> getTwilioConversationsStream() {
     return eventChannel.receiveBroadcastStream().cast();
   }
 }

@@ -53,9 +53,9 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                 ConversationsClient.create(context, token, props, mConversationsClientCallback)
             }
             "myConversations" -> {
-                val conversations = emptyList<String>().toMutableList()
+                val conversations = emptyList<HashMap<String, String>>().toMutableList()
                 conversationsClient?.myConversations?.forEach {
-                    conversations += it.friendlyName
+                    conversations += hashMapOf(Pair("sid", it.sid), Pair("friendlyName", it.friendlyName))
                 }
 
                 result.success(conversations)
@@ -87,7 +87,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
     private val mConversationsClientListener: ConversationsClientListener =
         object : ConversationsClientListener {
             override fun onConversationAdded(conversation: Conversation?) {
-
+                conversationsStreamHandler.sink?.success(hashMapOf<String, String?>("onConversationAdded" to conversation?.sid))
             }
 
             override fun onConversationUpdated(
@@ -122,10 +122,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
             }
 
             override fun onClientSynchronization(synchronizationStatus: ConversationsClient.SynchronizationStatus) {
-                conversationsStreamHandler.sink?.success(synchronizationStatus.value)
-                if (synchronizationStatus == ConversationsClient.SynchronizationStatus.COMPLETED) {
-                    // loadChannels()
-                }
+                conversationsStreamHandler.sink?.success(hashMapOf<String, Int>("onClientSynchronization" to synchronizationStatus.value))
             }
 
             override fun onNewMessageNotification(
@@ -137,7 +134,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
             }
 
             override fun onAddedToConversationNotification(conversationSid: String?) {
-
+                conversationsStreamHandler.sink?.success(hashMapOf<String, String?>("onAddedToConversationNotification" to conversationSid))
             }
 
             override fun onRemovedFromConversationNotification(conversationSid: String?) {

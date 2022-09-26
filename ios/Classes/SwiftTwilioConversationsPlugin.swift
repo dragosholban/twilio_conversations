@@ -28,10 +28,10 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                 result(initResult.isSuccessful)
             }
         case "myConversations":
-            var conversations: [String] = []
+            var conversations: [[String: String?]] = []
             
             for  conversation in client?.myConversations() ?? [] {
-                conversations.append(conversation.friendlyName ?? "[unknown]")
+                conversations.append(["sid": conversation.sid, "friendlyName": conversation.friendlyName])
             }
             
             result(conversations)
@@ -41,10 +41,14 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
     }
     
     public func conversationsClient(_ client: TwilioConversationsClient, synchronizationStatusUpdated status: TCHClientSynchronizationStatus) {
-        SwiftTwilioConversationsPlugin.conversationsStreamHandler.sink?(status.rawValue)
-        
-        guard status == .completed else {
-            return
-        }
+        SwiftTwilioConversationsPlugin.conversationsStreamHandler.sink?(["synchronizationStatusUpdated": status.rawValue])
+    }
+    
+    public func conversationsClient(_ client: TwilioConversationsClient, conversationAdded conversation:TCHConversation) {
+        SwiftTwilioConversationsPlugin.conversationsStreamHandler.sink?(["conversationAdded": conversation.sid])
+    }
+    
+    public func conversationsClient(_ client: TwilioConversationsClient, notificationAddedToConversationWithSid conversationSid:String) {
+        SwiftTwilioConversationsPlugin.conversationsStreamHandler.sink?(["notificationAddedToConversationWithSid": conversationSid])
     }
 }

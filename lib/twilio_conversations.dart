@@ -9,7 +9,7 @@ class TwilioConversations {
     return TwilioConversationsPlatform.instance.myConversations();
   }
 
-  Stream<int> getTwilioConversationsStream() {
+  Stream<Map> getTwilioConversationsStream() {
     return TwilioConversationsPlatform.instance.getTwilioConversationsStream();
   }
 }
