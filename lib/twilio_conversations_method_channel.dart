@@ -47,4 +47,12 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
       'sid': sid,
     });
   }
+
+  @override
+  Future sendMessage(String sid, String text) {
+    return methodChannel.invokeMethod('sendMessage', {
+      'sid': sid,
+      'text': text,
+    });
+  }
 }

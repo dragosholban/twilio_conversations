@@ -75,6 +75,24 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                     result(nil)
                 }
             }
+        case "sendMessage":
+            let arguments = call.arguments as! [String: Any]
+            let sid = arguments["sid"] as! String
+            let text = arguments["text"] as! String
+            
+            client?.conversation(withSidOrUniqueName: sid) {(r, conversation) in
+                if (r.isSuccessful) {
+                    conversation?.prepareMessage().setBody(text).buildAndSend() {(r, message) in
+                        if(r.isSuccessful) {
+                            result(true)
+                        } else {
+                            result(false)
+                        }
+                    }
+                } else {
+                    result(nil)
+                }
+            }
         default:
             result(FlutterMethodNotImplemented)
         }

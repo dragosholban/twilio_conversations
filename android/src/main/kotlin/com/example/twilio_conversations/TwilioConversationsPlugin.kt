@@ -110,6 +110,22 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+            "sendMessage" -> {
+                val sid = call.argument<String>("sid") ?: ""
+                val text = call.argument<String>("text") ?: ""
+
+                mainScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val conversation = conversationsClient?.getConversation(sid)
+                        conversation
+                            ?.prepareMessage()
+                            ?.setBody(text)
+                            ?.buildAndSend() {
+                                result.success(true)
+                            }
+                    }
+                }
+            }
             else -> {
                 result.notImplemented()
             }

@@ -40,6 +40,10 @@ abstract class TwilioConversationsPlatform extends PlatformInterface {
     throw UnimplementedError('getMessages() has not been implemented.');
   }
 
+  Future sendMessage(String sid, String text) {
+    throw UnimplementedError('sendMessage() has not been implemented.');
+  }
+
   Stream<Map> getTwilioConversationsStream() {
     throw UnimplementedError(
         'getTwilioConversationsStream() has not been implemented.');
