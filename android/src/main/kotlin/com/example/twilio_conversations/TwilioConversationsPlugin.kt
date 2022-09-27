@@ -41,7 +41,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
     private var conversationsStreamHandler = TwilioConversationsStreamHandler()
 
     // The scope for the UI thread
-    private val mainScope = CoroutineScope(Dispatchers.Main)
+    private val mainScope = CoroutineScope(Dispatchers.IO)
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "twilio_conversations")
@@ -88,6 +88,24 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                 CallbackListener<Message>() {
                                     result.success(it.body)
                                 })
+                        }
+                    }
+                }
+            }
+            "getMessages" -> {
+                val sid = call.argument<String>("sid") ?: ""
+
+                mainScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val conversation = conversationsClient?.getConversation(sid)
+                        conversation?.getLastMessages(
+                            100
+                        ) { messages ->
+                            val returnMessages = emptyList<String>().toMutableList()
+                            messages?.forEach {
+                                returnMessages.add(it.body)
+                            }
+                            result.success(returnMessages)
                         }
                     }
                 }

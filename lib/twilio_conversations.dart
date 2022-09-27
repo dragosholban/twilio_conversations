@@ -26,6 +26,16 @@ class TwilioConversations {
     return TwilioConversationsPlatform.instance.getMessageByIndex(sid, index);
   }
 
+  Future<List<String>> getMessages(String sid) async {
+    final List<String> messages = [];
+    final data = await TwilioConversationsPlatform.instance.getMessages(sid);
+    for (final item in data ?? []) {
+      messages.add(item);
+    }
+
+    return messages;
+  }
+
   Stream<Map> getTwilioConversationsStream() {
     return TwilioConversationsPlatform.instance.getTwilioConversationsStream();
   }

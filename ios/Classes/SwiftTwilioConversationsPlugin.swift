@@ -53,6 +53,28 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                     result(nil)
                 }
             }
+        case "getMessages":
+            let arguments = call.arguments as! [String: Any]
+            let sid = arguments["sid"] as! String
+            
+            client?.conversation(withSidOrUniqueName: sid) {(r, conversation) in
+                if (r.isSuccessful) {
+                    conversation?.getLastMessages(withCount: 100) { (r, messages) in
+                        if(r.isSuccessful) {
+                            var returnMessages: [String?] = []
+                            
+                            for message in messages ?? [] {
+                                returnMessages.append(message.body)
+                            }
+                            result(returnMessages)
+                        } else {
+                            result(nil)
+                        }
+                    }
+                } else {
+                    result(nil)
+                }
+            }
         default:
             result(FlutterMethodNotImplemented)
         }

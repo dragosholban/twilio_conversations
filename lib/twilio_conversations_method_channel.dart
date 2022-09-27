@@ -40,4 +40,11 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
 
     return result;
   }
+
+  @override
+  Future<List?> getMessages(String sid) async {
+    return methodChannel.invokeListMethod('getMessages', {
+      'sid': sid,
+    });
+  }
 }
