@@ -134,12 +134,13 @@ class __$$_ConversationCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_Conversation implements _Conversation {
+class _$_Conversation extends _Conversation {
   const _$_Conversation(
       {required this.sid,
       this.friendlyName,
       this.lastMessageDate,
-      this.lastMessageIndex});
+      this.lastMessageIndex})
+      : super._();
 
   factory _$_Conversation.fromJson(Map<String, dynamic> json) =>
       _$$_ConversationFromJson(json);
@@ -194,12 +195,13 @@ class _$_Conversation implements _Conversation {
   }
 }
 
-abstract class _Conversation implements Conversation {
+abstract class _Conversation extends Conversation {
   const factory _Conversation(
       {required final String sid,
       final String? friendlyName,
       final String? lastMessageDate,
       final int? lastMessageIndex}) = _$_Conversation;
+  const _Conversation._() : super._();
 
   factory _Conversation.fromJson(Map<String, dynamic> json) =
       _$_Conversation.fromJson;

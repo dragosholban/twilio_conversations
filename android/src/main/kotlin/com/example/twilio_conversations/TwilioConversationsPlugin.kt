@@ -110,6 +110,19 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+            "getUnreadMessagesCount" -> {
+                val sid = call.argument<String>("sid") ?: ""
+
+                mainScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val conversation = conversationsClient?.getConversation(sid)
+
+                        conversation?.getUnreadMessagesCount() {
+                            result.success(it)
+                        }
+                    }
+                }
+            }
             "getMessages" -> {
                 val sid = call.argument<String>("sid") ?: ""
 
@@ -119,13 +132,16 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                         conversation?.getLastMessages(
                             100
                         ) { messages ->
-                            val returnMessages = emptyList<HashMap<String, String?>>().toMutableList()
+                            val returnMessages =
+                                emptyList<HashMap<String, String?>>().toMutableList()
                             messages?.forEach {
-                                returnMessages.add(hashMapOf<String, String?>(
-                                    "messageSid" to it.sid,
-                                    "messageBody" to it.body,
-                                    "participantIdentity" to it.participant.identity,
-                                ))
+                                returnMessages.add(
+                                    hashMapOf<String, String?>(
+                                        "messageSid" to it.sid,
+                                        "messageBody" to it.body,
+                                        "participantIdentity" to it.participant.identity,
+                                    )
+                                )
                             }
                             result.success(returnMessages)
                         }
