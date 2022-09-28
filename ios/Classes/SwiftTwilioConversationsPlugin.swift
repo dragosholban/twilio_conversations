@@ -5,6 +5,7 @@ import TwilioConversationsClient
 public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConversationsClientDelegate {
     private var client: TwilioConversationsClient?
     private static var conversationsStreamHandler: TwilioConversationsStreamHandler = TwilioConversationsStreamHandler()
+    public static var conversationListeners: [String: ConversationListener] = [:]
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let methodChannel = FlutterMethodChannel(name: "twilio_conversations", binaryMessenger: registrar.messenger())
@@ -13,6 +14,10 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
         
         let instance = SwiftTwilioConversationsPlugin()
         registrar.addMethodCallDelegate(instance, channel: methodChannel)
+    }
+    
+    public static func addToSink(data: Any) {
+        SwiftTwilioConversationsPlugin.conversationsStreamHandler.sink?(data)
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -32,6 +37,12 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
             
             for  conversation in client?.myConversations() ?? [] {
                 conversations.append(["sid": conversation.sid, "friendlyName": conversation.friendlyName, "lastMessageDate": conversation.lastMessageDate?.ISO8601Format(), "lastMessageIndex": conversation.lastMessageIndex])
+                
+                if !SwiftTwilioConversationsPlugin.conversationListeners.keys.contains(conversation.sid!) {
+                    NSLog("setupConversationListener => conversation: \(String(describing: conversation.sid))")
+                    SwiftTwilioConversationsPlugin.conversationListeners[conversation.sid!] = ConversationListener(conversation.sid!)
+                    conversation.delegate = SwiftTwilioConversationsPlugin.conversationListeners[conversation.sid!]
+                }
             }
             
             result(conversations)

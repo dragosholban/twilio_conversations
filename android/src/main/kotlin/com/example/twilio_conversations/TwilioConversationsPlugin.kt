@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import androidx.annotation.NonNull
+import com.example.twilio_conversations.listeners.ConversationListenerImpl
 import com.twilio.conversations.*
 import com.twilio.conversations.extensions.getConversation
 import com.twilio.util.ErrorInfo
@@ -19,13 +20,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.format.DateTimeFormatter
 
 
 /** TwilioConversationsPlugin */
 class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
-    public val TAG = TwilioConversationsPlugin::class.qualifiedName
-
+    private val TAG = TwilioConversationsPlugin::class.qualifiedName
+    var conversationListeners: HashMap<String, ConversationListener> = hashMapOf()
 
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
@@ -38,7 +38,10 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
     private var result: Result? = null
 
     private var conversationsClient: ConversationsClient? = null
-    private var conversationsStreamHandler = TwilioConversationsStreamHandler()
+
+    companion object {
+        lateinit var conversationsStreamHandler: TwilioConversationsStreamHandler
+    }
 
     // The scope for the UI thread
     private val mainScope = CoroutineScope(Dispatchers.IO)
@@ -47,6 +50,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "twilio_conversations")
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
+        conversationsStreamHandler = TwilioConversationsStreamHandler()
 
         val myEventChannel =
             EventChannel(flutterPluginBinding.binaryMessenger, "twilio_conversations_stream")
@@ -64,13 +68,20 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
             }
             "myConversations" -> {
                 val conversations = emptyList<HashMap<String, Any?>>().toMutableList()
-                conversationsClient?.myConversations?.forEach {
+                conversationsClient?.myConversations?.forEach { conversation ->
                     conversations += hashMapOf(
-                        Pair("sid", it.sid),
-                        Pair("friendlyName", it.friendlyName),
-                        Pair("lastMessageDate", it.lastMessageDate?.toString()),
-                        Pair("lastMessageIndex", it.lastMessageIndex)
+                        Pair("sid", conversation.sid),
+                        Pair("friendlyName", conversation.friendlyName),
+                        Pair("lastMessageDate", conversation.lastMessageDate?.toString()),
+                        Pair("lastMessageIndex", conversation.lastMessageIndex)
                     )
+
+                    // Setting flutter event listener for the given channel if one does not yet exist.
+                    if (conversation.sid != null && !conversationListeners.containsKey(conversation.sid)) {
+                        Log.d(TAG, "setupConversationListener => conversation: ${conversation.sid}")
+                        conversationListeners[conversation.sid] = ConversationListenerImpl(conversation.sid)
+                        conversation.addListener(conversationListeners[conversation.sid])
+                    }
                 }
 
                 result.success(conversations)
