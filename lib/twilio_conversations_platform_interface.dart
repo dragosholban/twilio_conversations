@@ -32,7 +32,7 @@ abstract class TwilioConversationsPlatform extends PlatformInterface {
     throw UnimplementedError('myConversations() has not been implemented.');
   }
 
-  Future<String?> getMessageByIndex(String sid, int index) {
+  Future<Map?> getMessageByIndex(String sid, int index) {
     throw UnimplementedError('getMessageByIndex() has not been implemented.');
   }
 

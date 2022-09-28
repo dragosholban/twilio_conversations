@@ -79,7 +79,8 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     // Setting flutter event listener for the given channel if one does not yet exist.
                     if (conversation.sid != null && !conversationListeners.containsKey(conversation.sid)) {
                         Log.d(TAG, "setupConversationListener => conversation: ${conversation.sid}")
-                        conversationListeners[conversation.sid] = ConversationListenerImpl(conversation.sid)
+                        conversationListeners[conversation.sid] =
+                            ConversationListenerImpl(conversation.sid)
                         conversation.addListener(conversationListeners[conversation.sid])
                     }
                 }
@@ -97,7 +98,13 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                             conversation?.getMessageByIndex(
                                 index.toLong(),
                                 CallbackListener<Message>() {
-                                    result.success(it.body)
+                                    result.success(
+                                        hashMapOf<String, String?>(
+                                            "messageSid" to it.sid,
+                                            "messageBody" to it.body,
+                                            "participantIdentity" to it.participant.identity,
+                                        )
+                                    )
                                 })
                         }
                     }
@@ -112,9 +119,13 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                         conversation?.getLastMessages(
                             100
                         ) { messages ->
-                            val returnMessages = emptyList<String>().toMutableList()
+                            val returnMessages = emptyList<HashMap<String, String?>>().toMutableList()
                             messages?.forEach {
-                                returnMessages.add(it.body)
+                                returnMessages.add(hashMapOf<String, String?>(
+                                    "messageSid" to it.sid,
+                                    "messageBody" to it.body,
+                                    "participantIdentity" to it.participant.identity,
+                                ))
                             }
                             result.success(returnMessages)
                         }
@@ -147,6 +158,12 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
         object : CallbackListener<ConversationsClient> {
             override fun onSuccess(conversationsClient: ConversationsClient) {
                 this@TwilioConversationsPlugin.conversationsClient = conversationsClient
+                conversationsStreamHandler.sink?.success(
+                    hashMapOf<String, String?>(
+                        "event" to "clientCreated",
+                        "identity" to conversationsClient.myIdentity,
+                    )
+                )
                 conversationsClient.addListener(this@TwilioConversationsPlugin.mConversationsClientListener)
                 Log.d(TAG, "Success creating Twilio Conversations Client")
                 this@TwilioConversationsPlugin.result?.success(true)

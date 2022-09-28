@@ -18,6 +18,7 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
                 "conversationSid" to conversationSid,
                 "messageSid" to message?.sid,
                 "messageBody" to message?.body,
+                "participantIdentity" to message?.participant.identity,
             )
         )
 //        TwilioConversationsPlugin.flutterClientApi.messageAdded(

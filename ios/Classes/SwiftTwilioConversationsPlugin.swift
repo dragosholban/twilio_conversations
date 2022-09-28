@@ -30,6 +30,12 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                                                           properties: nil,
                                                           delegate: self) { (initResult, client) in
                 self.client = client
+                if (initResult.isSuccessful) {
+                    SwiftTwilioConversationsPlugin.addToSink(data: [
+                        "event": "clientCreated",
+                        "identity": self.client?.user?.identity,
+                    ])
+                }
                 result(initResult.isSuccessful)
             }
         case "myConversations":
@@ -55,7 +61,11 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                 if (r.isSuccessful) {
                     conversation?.message(withIndex: NSNumber(value: index)) { (r, message) in
                         if(r.isSuccessful) {
-                            result(message?.body)
+                            result([
+                                "messageSid": message?.sid,
+                                "messageBody": message?.body,
+                                "participantIdentity": message?.participant?.identity,
+                            ])
                         } else {
                             result(nil)
                         }
@@ -72,10 +82,14 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                 if (r.isSuccessful) {
                     conversation?.getLastMessages(withCount: 100) { (r, messages) in
                         if(r.isSuccessful) {
-                            var returnMessages: [String?] = []
+                            var returnMessages: [[String: String?]] = []
                             
                             for message in messages ?? [] {
-                                returnMessages.append(message.body)
+                                returnMessages.append([
+                                    "messageSid": message.sid,
+                                    "messageBody": message.body,
+                                    "participantIdentity": message.participant?.identity,
+                                ])
                             }
                             result(returnMessages)
                         } else {

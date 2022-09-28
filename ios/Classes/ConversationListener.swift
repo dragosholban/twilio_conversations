@@ -20,6 +20,7 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
                 "conversationSid": conversation.sid,
                 "messageSid": message.sid,
                 "messageBody": message.body,
+                "participantIdentity": message.participant?.identity,
             ])
             //        SwiftTwilioConversationsPlugin.flutterClientApi?.messageAddedConversationSid(
             //            conversationSid,
