@@ -52,6 +52,17 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
             }
             
             result(conversations)
+        case "getConversation":
+            let arguments = call.arguments as! [String: Any]
+            let sid = arguments["sid"] as! String
+            
+            client?.conversation(withSidOrUniqueName: sid) {(r, conversation) in
+                if (r.isSuccessful) {
+                    result(["sid": conversation?.sid, "friendlyName": conversation?.friendlyName, "lastMessageDate": conversation?.lastMessageDate?.ISO8601Format(), "lastMessageIndex": conversation?.lastMessageIndex])
+                } else {
+                    result(nil)
+                }
+            }
         case "getMessageByIndex":
             let arguments = call.arguments as! [String: Any]
             let sid = arguments["sid"] as! String

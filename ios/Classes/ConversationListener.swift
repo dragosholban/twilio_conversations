@@ -121,6 +121,8 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
                 "event": "participantUpdated",
                 "conversationSid": conversation.sid,
                 "participantSid": participant.sid,
+                "participantIdentity": participant.identity,
+                "reason": updated.rawValue,
             ])
             //        SwiftTwilioConversationsPlugin.flutterClientApi?.participantUpdatedConversationSid(
             //            conversationSid,

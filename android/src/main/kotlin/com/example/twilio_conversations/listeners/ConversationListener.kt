@@ -69,6 +69,7 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
                 "event" to "participantAdded",
                 "conversationSid" to conversationSid,
                 "participantSid" to participant.sid,
+                "participantIdentity" to participant.identity,
             )
         )
 //        TwilioConversationsPlugin.flutterClientApi.participantAdded(
@@ -79,10 +80,12 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
     override fun onParticipantUpdated(participant: Participant, reason: Participant.UpdateReason) {
         Log.d(TAG, "onParticipantUpdated => participantSid = ${participant.sid}, reason = $reason")
         TwilioConversationsPlugin.conversationsStreamHandler.sink?.success(
-            hashMapOf<String, String?>(
+            hashMapOf<String, Any?>(
                 "event" to "participantUpdated",
                 "conversationSid" to conversationSid,
                 "participantSid" to participant.sid,
+                "participantIdentity" to participant.identity,
+                "reason" to reason.value,
             )
         )
 //        TwilioConversationsPlugin.flutterClientApi.participantUpdated(
@@ -98,6 +101,7 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
                 "event" to "participantDeleted",
                 "conversationSid" to conversationSid,
                 "participantSid" to participant.sid,
+                "participantIdentity" to participant.identity,
             )
         )
 //        TwilioConversationsPlugin.flutterClientApi.participantDeleted(

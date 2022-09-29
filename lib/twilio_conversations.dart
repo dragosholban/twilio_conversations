@@ -23,6 +23,20 @@ class TwilioConversations {
     return conversations;
   }
 
+  Future<Conversation?> getConversation(String sid) async {
+    final data =
+        await TwilioConversationsPlatform.instance.getConversation(sid);
+
+    final conversation = Conversation(
+      sid: data?['sid'],
+      friendlyName: data?['friendlyName'],
+      lastMessageDate: data?['lastMessageDate'],
+      lastMessageIndex: data?['lastMessageIndex'],
+    );
+
+    return conversation;
+  }
+
   Future<Message?> getMessageByIndex(String sid, int index) async {
     final data = await TwilioConversationsPlatform.instance
         .getMessageByIndex(sid, index);

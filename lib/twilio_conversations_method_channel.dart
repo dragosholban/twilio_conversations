@@ -31,6 +31,15 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
   }
 
   @override
+  Future<Map?> getConversation(String sid) async {
+    final result = await methodChannel.invokeMapMethod('getConversation', {
+      'sid': sid,
+    });
+
+    return result;
+  }
+
+  @override
   Future<Map?> getMessageByIndex(String sid, int index) async {
     final result = await methodChannel.invokeMapMethod('getMessageByIndex', {
       'sid': sid,

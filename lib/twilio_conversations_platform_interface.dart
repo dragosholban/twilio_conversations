@@ -36,6 +36,10 @@ abstract class TwilioConversationsPlatform extends PlatformInterface {
     throw UnimplementedError('getMessageByIndex() has not been implemented.');
   }
 
+  Future<Map?> getConversation(String sid) {
+    throw UnimplementedError('getConversation() has not been implemented.');
+  }
+
   Future<int?> getUnreadMessagesCount(String sid) {
     throw UnimplementedError(
         'getUnreadMessagesCount() has not been implemented.');

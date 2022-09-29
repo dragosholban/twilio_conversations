@@ -87,6 +87,30 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
                 result.success(conversations)
             }
+            "getConversation" -> {
+                val sid = call.argument<String>("sid") ?: ""
+
+                mainScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val conversation = conversationsClient?.getConversation(sid)
+                        if (conversation != null) {
+                            result.success(
+                                hashMapOf(
+                                    Pair("sid", conversation.sid),
+                                    Pair("friendlyName", conversation.friendlyName),
+                                    Pair(
+                                        "lastMessageDate",
+                                        conversation.lastMessageDate?.toString()
+                                    ),
+                                    Pair("lastMessageIndex", conversation.lastMessageIndex)
+                                )
+                            )
+                        } else {
+                            result.success(hashMapOf<String, String?>());
+                        }
+                    }
+                }
+            }
             "getMessageByIndex" -> {
                 val sid = call.argument<String>("sid") ?: ""
                 val index = call.argument<Int>("index")
