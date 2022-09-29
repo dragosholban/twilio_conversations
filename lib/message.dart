@@ -10,6 +10,7 @@ class Message with _$Message {
     String? body,
     String? lastMessageDate,
     String? participantIdentity,
+    DateTime? dateCreated,
   }) = _Message;
 
   factory Message.fromJson(Map<String, dynamic> json) =>

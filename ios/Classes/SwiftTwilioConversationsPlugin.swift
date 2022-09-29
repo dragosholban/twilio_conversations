@@ -65,6 +65,7 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                                 "messageSid": message?.sid,
                                 "messageBody": message?.body,
                                 "participantIdentity": message?.participant?.identity,
+                                "date": message?.dateCreated,
                             ])
                         } else {
                             result(nil)
@@ -90,7 +91,22 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                     result(nil)
                 }
             }
-            
+        case "setAllMessagesRead" :
+            let arguments = call.arguments as! [String: Any]
+            let sid = arguments["sid"] as! String
+            client?.conversation(withSidOrUniqueName: sid) {(r, conversation) in
+                if (r.isSuccessful) {
+                    conversation?.setAllMessagesReadWithCompletion() { (r, count) in
+                        if(r.isSuccessful) {
+                            result(count)
+                        } else {
+                            result(nil)
+                        }
+                    }
+                } else {
+                    result(nil)
+                }
+            }
         case "getMessages":
             let arguments = call.arguments as! [String: Any]
             let sid = arguments["sid"] as! String
@@ -106,6 +122,7 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                                     "messageSid": message.sid,
                                     "messageBody": message.body,
                                     "participantIdentity": message.participant?.identity,
+                                    "date": message.dateCreated,
                                 ])
                             }
                             result(returnMessages)

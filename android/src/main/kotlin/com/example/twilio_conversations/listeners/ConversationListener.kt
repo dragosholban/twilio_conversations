@@ -16,9 +16,10 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
             hashMapOf<String, String?>(
                 "event" to "messageAdded",
                 "conversationSid" to conversationSid,
-                "messageSid" to message?.sid,
-                "messageBody" to message?.body,
-                "participantIdentity" to message?.participant.identity,
+                "messageSid" to message.sid,
+                "messageBody" to message.body,
+                "date" to message.dateCreated,
+                "participantIdentity" to message.participant.identity,
             )
         )
 //        TwilioConversationsPlugin.flutterClientApi.messageAdded(
@@ -28,6 +29,16 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
 
     override fun onMessageUpdated(message: Message, reason: Message.UpdateReason) {
         Log.d(TAG, "onMessageUpdated => messageSid = ${message.sid}, reason = $reason")
+        TwilioConversationsPlugin.conversationsStreamHandler.sink?.success(
+            hashMapOf<String, String?>(
+                "event" to "messageUpdated",
+                "conversationSid" to conversationSid,
+                "messageSid" to message.sid,
+                "messageBody" to message.body,
+                "date" to message.dateCreated,
+                "participantIdentity" to message.participant.identity,
+            )
+        )
 //        TwilioConversationsPlugin.flutterClientApi.messageUpdated(
 //            conversationSid,
 //            Mapper.messageToPigeon(message),
@@ -36,6 +47,16 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
 
     override fun onMessageDeleted(message: Message) {
         Log.d(TAG, "onMessageDeleted => messageSid = ${message.sid}")
+        TwilioConversationsPlugin.conversationsStreamHandler.sink?.success(
+            hashMapOf<String, String?>(
+                "event" to "messageDeleted",
+                "conversationSid" to conversationSid,
+                "messageSid" to message.sid,
+                "messageBody" to message.body,
+                "date" to message.dateCreated,
+                "participantIdentity" to message.participant.identity,
+            )
+        )
 //        TwilioConversationsPlugin.flutterClientApi.messageDeleted(
 //            conversationSid,
 //            Mapper.messageToPigeon(message)) {}
@@ -43,6 +64,13 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
 
     override fun onParticipantAdded(participant: Participant) {
         Log.d(TAG, "onParticipantAdded => participantSid = ${participant.sid}")
+        TwilioConversationsPlugin.conversationsStreamHandler.sink?.success(
+            hashMapOf<String, String?>(
+                "event" to "participantAdded",
+                "conversationSid" to conversationSid,
+                "participantSid" to participant.sid,
+            )
+        )
 //        TwilioConversationsPlugin.flutterClientApi.participantAdded(
 //            conversationSid,
 //            Mapper.participantToPigeon(participant)) {}
@@ -50,6 +78,13 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
 
     override fun onParticipantUpdated(participant: Participant, reason: Participant.UpdateReason) {
         Log.d(TAG, "onParticipantUpdated => participantSid = ${participant.sid}, reason = $reason")
+        TwilioConversationsPlugin.conversationsStreamHandler.sink?.success(
+            hashMapOf<String, String?>(
+                "event" to "participantUpdated",
+                "conversationSid" to conversationSid,
+                "participantSid" to participant.sid,
+            )
+        )
 //        TwilioConversationsPlugin.flutterClientApi.participantUpdated(
 //            conversationSid,
 //            Mapper.participantToPigeon(participant),
@@ -58,6 +93,13 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
 
     override fun onParticipantDeleted(participant: Participant) {
         Log.d(TAG, ".onParticipantDeleted => participantSid = ${participant.sid}")
+        TwilioConversationsPlugin.conversationsStreamHandler.sink?.success(
+            hashMapOf<String, String?>(
+                "event" to "participantDeleted",
+                "conversationSid" to conversationSid,
+                "participantSid" to participant.sid,
+            )
+        )
 //        TwilioConversationsPlugin.flutterClientApi.participantDeleted(
 //            conversationSid,
 //            Mapper.participantToPigeon(participant)) {}
@@ -67,6 +109,12 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
         Log.d(
             TAG,
             "onTypingStarted => conversationSid = ${conversation.sid}, participantSid = ${conversation.sid}"
+        )
+        TwilioConversationsPlugin.conversationsStreamHandler.sink?.success(
+            hashMapOf<String, String?>(
+                "event" to "typingStarted",
+                "conversationSid" to conversationSid,
+            )
         )
 //        TwilioConversationsPlugin.flutterClientApi.typingStarted(
 //            conversationSid,
@@ -79,6 +127,12 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
             TAG,
             "onTypingEnded => conversationSid = ${conversation.sid}, participantSid = ${participant.sid}"
         )
+        TwilioConversationsPlugin.conversationsStreamHandler.sink?.success(
+            hashMapOf<String, String?>(
+                "event" to "typingEnded",
+                "conversationSid" to conversationSid,
+            )
+        )
 //        TwilioConversationsPlugin.flutterClientApi.typingEnded(
 //            conversationSid,
 //            Mapper.conversationToPigeon(conversation),
@@ -89,6 +143,13 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
         Log.d(
             TAG,
             "onSynchronizationChanged => sid: ${conversation.sid}, status: ${conversation.synchronizationStatus}"
+        )
+        TwilioConversationsPlugin.conversationsStreamHandler.sink?.success(
+            hashMapOf<String, String?>(
+                "event" to "synchronizationChanged",
+                "conversationSid" to conversationSid,
+                "status" to conversation.synchronizationStatus.name,
+            )
         )
 //        TwilioConversationsPlugin.flutterClientApi.synchronizationChanged(
 //            conversationSid,

@@ -102,6 +102,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                         hashMapOf<String, String?>(
                                             "messageSid" to it.sid,
                                             "messageBody" to it.body,
+                                            "date" to it.dateCreated,
                                             "participantIdentity" to it.participant.identity,
                                         )
                                     )
@@ -123,6 +124,19 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+            "setAllMessagesRead" -> {
+                val sid = call.argument<String>("sid") ?: ""
+
+                mainScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val conversation = conversationsClient?.getConversation(sid)
+
+                        conversation?.setAllMessagesRead() {
+                            result.success(it)
+                        }
+                    }
+                }
+            }
             "getMessages" -> {
                 val sid = call.argument<String>("sid") ?: ""
 
@@ -139,6 +153,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                     hashMapOf<String, String?>(
                                         "messageSid" to it.sid,
                                         "messageBody" to it.body,
+                                        "date" to it.dateCreated,
                                         "participantIdentity" to it.participant.identity,
                                     )
                                 )

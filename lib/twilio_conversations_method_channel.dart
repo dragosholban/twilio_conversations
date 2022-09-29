@@ -40,8 +40,16 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
     return result;
   }
 
+  @override
   Future<int?> getUnreadMessagesCount(String sid) async {
     return await methodChannel.invokeMethod('getUnreadMessagesCount', {
+      'sid': sid,
+    });
+  }
+
+  @override
+  Future<int?> setAllMessagesRead(String sid) async {
+    return await methodChannel.invokeMethod('setAllMessagesRead', {
       'sid': sid,
     });
   }

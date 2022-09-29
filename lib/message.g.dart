@@ -11,6 +11,9 @@ _$_Message _$$_MessageFromJson(Map<String, dynamic> json) => _$_Message(
       body: json['body'] as String?,
       lastMessageDate: json['lastMessageDate'] as String?,
       participantIdentity: json['participantIdentity'] as String?,
+      dateCreated: json['dateCreated'] == null
+          ? null
+          : DateTime.parse(json['dateCreated'] as String),
     );
 
 Map<String, dynamic> _$$_MessageToJson(_$_Message instance) =>
@@ -19,4 +22,5 @@ Map<String, dynamic> _$$_MessageToJson(_$_Message instance) =>
       'body': instance.body,
       'lastMessageDate': instance.lastMessageDate,
       'participantIdentity': instance.participantIdentity,
+      'dateCreated': instance.dateCreated?.toIso8601String(),
     };

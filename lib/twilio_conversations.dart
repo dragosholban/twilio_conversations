@@ -30,6 +30,7 @@ class TwilioConversations {
     final message = Message(
       sid: data?['messageSid'],
       body: data?['messageBody'],
+      dateCreated: DateTime.parse(data?['date']),
       participantIdentity: data?['participantIdentity'],
     );
     return message;
@@ -42,6 +43,7 @@ class TwilioConversations {
       final message = Message(
         sid: item['messageSid'],
         body: item['messageBody'],
+        dateCreated: DateTime.parse(item['date']),
         participantIdentity: item['participantIdentity'],
       );
       messages.add(message);

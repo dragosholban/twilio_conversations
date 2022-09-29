@@ -20,4 +20,8 @@ class Conversation with _$Conversation {
   Future<int?> getUreadMessagesCount() {
     return TwilioConversationsPlatform.instance.getUnreadMessagesCount(sid);
   }
+
+  Future<int?> setAllMessagesRead() {
+    return TwilioConversationsPlatform.instance.setAllMessagesRead(sid);
+  }
 }

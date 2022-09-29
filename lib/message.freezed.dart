@@ -24,6 +24,7 @@ mixin _$Message {
   String? get body => throw _privateConstructorUsedError;
   String? get lastMessageDate => throw _privateConstructorUsedError;
   String? get participantIdentity => throw _privateConstructorUsedError;
+  DateTime? get dateCreated => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -38,7 +39,8 @@ abstract class $MessageCopyWith<$Res> {
       {String sid,
       String? body,
       String? lastMessageDate,
-      String? participantIdentity});
+      String? participantIdentity,
+      DateTime? dateCreated});
 }
 
 /// @nodoc
@@ -55,6 +57,7 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
     Object? body = freezed,
     Object? lastMessageDate = freezed,
     Object? participantIdentity = freezed,
+    Object? dateCreated = freezed,
   }) {
     return _then(_value.copyWith(
       sid: sid == freezed
@@ -73,6 +76,10 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
           ? _value.participantIdentity
           : participantIdentity // ignore: cast_nullable_to_non_nullable
               as String?,
+      dateCreated: dateCreated == freezed
+          ? _value.dateCreated
+          : dateCreated // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 }
@@ -87,7 +94,8 @@ abstract class _$$_MessageCopyWith<$Res> implements $MessageCopyWith<$Res> {
       {String sid,
       String? body,
       String? lastMessageDate,
-      String? participantIdentity});
+      String? participantIdentity,
+      DateTime? dateCreated});
 }
 
 /// @nodoc
@@ -105,6 +113,7 @@ class __$$_MessageCopyWithImpl<$Res> extends _$MessageCopyWithImpl<$Res>
     Object? body = freezed,
     Object? lastMessageDate = freezed,
     Object? participantIdentity = freezed,
+    Object? dateCreated = freezed,
   }) {
     return _then(_$_Message(
       sid: sid == freezed
@@ -123,6 +132,10 @@ class __$$_MessageCopyWithImpl<$Res> extends _$MessageCopyWithImpl<$Res>
           ? _value.participantIdentity
           : participantIdentity // ignore: cast_nullable_to_non_nullable
               as String?,
+      dateCreated: dateCreated == freezed
+          ? _value.dateCreated
+          : dateCreated // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 }
@@ -134,7 +147,8 @@ class _$_Message implements _Message {
       {required this.sid,
       this.body,
       this.lastMessageDate,
-      this.participantIdentity});
+      this.participantIdentity,
+      this.dateCreated});
 
   factory _$_Message.fromJson(Map<String, dynamic> json) =>
       _$$_MessageFromJson(json);
@@ -147,10 +161,12 @@ class _$_Message implements _Message {
   final String? lastMessageDate;
   @override
   final String? participantIdentity;
+  @override
+  final DateTime? dateCreated;
 
   @override
   String toString() {
-    return 'Message(sid: $sid, body: $body, lastMessageDate: $lastMessageDate, participantIdentity: $participantIdentity)';
+    return 'Message(sid: $sid, body: $body, lastMessageDate: $lastMessageDate, participantIdentity: $participantIdentity, dateCreated: $dateCreated)';
   }
 
   @override
@@ -163,7 +179,9 @@ class _$_Message implements _Message {
             const DeepCollectionEquality()
                 .equals(other.lastMessageDate, lastMessageDate) &&
             const DeepCollectionEquality()
-                .equals(other.participantIdentity, participantIdentity));
+                .equals(other.participantIdentity, participantIdentity) &&
+            const DeepCollectionEquality()
+                .equals(other.dateCreated, dateCreated));
   }
 
   @JsonKey(ignore: true)
@@ -173,7 +191,8 @@ class _$_Message implements _Message {
       const DeepCollectionEquality().hash(sid),
       const DeepCollectionEquality().hash(body),
       const DeepCollectionEquality().hash(lastMessageDate),
-      const DeepCollectionEquality().hash(participantIdentity));
+      const DeepCollectionEquality().hash(participantIdentity),
+      const DeepCollectionEquality().hash(dateCreated));
 
   @JsonKey(ignore: true)
   @override
@@ -193,7 +212,8 @@ abstract class _Message implements Message {
       {required final String sid,
       final String? body,
       final String? lastMessageDate,
-      final String? participantIdentity}) = _$_Message;
+      final String? participantIdentity,
+      final DateTime? dateCreated}) = _$_Message;
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$_Message.fromJson;
 
@@ -205,6 +225,8 @@ abstract class _Message implements Message {
   String? get lastMessageDate;
   @override
   String? get participantIdentity;
+  @override
+  DateTime? get dateCreated;
   @override
   @JsonKey(ignore: true)
   _$$_MessageCopyWith<_$_Message> get copyWith =>
