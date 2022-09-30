@@ -20,6 +20,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.HashMap
 
 
 /** TwilioConversationsPlugin */
@@ -72,8 +75,8 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     conversations += hashMapOf(
                         Pair("sid", conversation.sid),
                         Pair("friendlyName", conversation.friendlyName),
-                        Pair("lastMessageDate", conversation.lastMessageDate?.toString()),
-                        Pair("lastMessageIndex", conversation.lastMessageIndex)
+                        Pair("lastMessageDate", dateToString(conversation.lastMessageDate)),
+                        Pair("lastMessageIndex", conversation.lastMessageIndex),
                     )
 
                     // Setting flutter event listener for the given channel if one does not yet exist.
@@ -100,7 +103,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                     Pair("friendlyName", conversation.friendlyName),
                                     Pair(
                                         "lastMessageDate",
-                                        conversation.lastMessageDate?.toString()
+                                        dateToString(conversation.lastMessageDate),
                                     ),
                                     Pair("lastMessageIndex", conversation.lastMessageIndex)
                                 )
@@ -236,7 +239,12 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
     private val mConversationsClientListener: ConversationsClientListener =
         object : ConversationsClientListener {
             override fun onConversationAdded(conversation: Conversation?) {
-                conversationsStreamHandler.sink?.success(hashMapOf<String, String?>("onConversationAdded" to conversation?.sid))
+                conversationsStreamHandler.sink?.success(
+                    hashMapOf<String, String?>(
+                        "event" to "conversationAdded",
+                        "conversationSid" to conversation?.sid,
+                    )
+                )
             }
 
             override fun onConversationUpdated(
@@ -271,7 +279,12 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
             }
 
             override fun onClientSynchronization(synchronizationStatus: ConversationsClient.SynchronizationStatus) {
-                conversationsStreamHandler.sink?.success(hashMapOf<String, Int>("onClientSynchronization" to synchronizationStatus.value))
+                conversationsStreamHandler.sink?.success(
+                    hashMapOf<String, Any>(
+                        "event" to "clientSynchronizationStatusUpdated",
+                        "status" to synchronizationStatus.value,
+                    )
+                )
             }
 
             override fun onNewMessageNotification(
@@ -283,7 +296,12 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
             }
 
             override fun onAddedToConversationNotification(conversationSid: String?) {
-                conversationsStreamHandler.sink?.success(hashMapOf<String, String?>("onAddedToConversationNotification" to conversationSid))
+                conversationsStreamHandler.sink?.success(
+                    hashMapOf<String, String?>(
+                        "event" to "notificationAddedToConversation",
+                        "conversationSid" to conversationSid,
+                    )
+                )
             }
 
             override fun onRemovedFromConversationNotification(conversationSid: String?) {
@@ -329,5 +347,11 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
     override fun onDetachedFromActivity() {
         TODO("Not yet implemented")
+    }
+
+    private fun dateToString(date: Date?): String? {
+        if (date == null) return null
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        return dateFormat.format(date)
     }
 }

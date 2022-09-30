@@ -169,14 +169,23 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
     }
     
     public func conversationsClient(_ client: TwilioConversationsClient, synchronizationStatusUpdated status: TCHClientSynchronizationStatus) {
-        SwiftTwilioConversationsPlugin.conversationsStreamHandler.sink?(["synchronizationStatusUpdated": status.rawValue])
+        SwiftTwilioConversationsPlugin.addToSink(data: [
+            "event": "clientSynchronizationStatusUpdated",
+            "status": status.rawValue,
+        ])
     }
     
     public func conversationsClient(_ client: TwilioConversationsClient, conversationAdded conversation:TCHConversation) {
-        SwiftTwilioConversationsPlugin.conversationsStreamHandler.sink?(["conversationAdded": conversation.sid])
+        SwiftTwilioConversationsPlugin.addToSink(data: [
+            "event": "conversationAdded",
+            "conversationSid": conversation.sid,
+        ])
     }
     
     public func conversationsClient(_ client: TwilioConversationsClient, notificationAddedToConversationWithSid conversationSid:String) {
-        SwiftTwilioConversationsPlugin.conversationsStreamHandler.sink?(["notificationAddedToConversationWithSid": conversationSid])
+        SwiftTwilioConversationsPlugin.addToSink(data: [
+            "event": "notificationAddedToConversation",
+            "conversationSid": conversationSid,
+        ])
     }
 }
