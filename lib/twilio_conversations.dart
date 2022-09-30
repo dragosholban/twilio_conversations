@@ -3,6 +3,10 @@ import 'package:twilio_conversations/message.dart';
 
 import 'twilio_conversations_platform_interface.dart';
 
+export 'constants.dart';
+export 'conversation.dart';
+export 'message.dart';
+
 class TwilioConversations {
   Future<bool?> initClient(String token) {
     return TwilioConversationsPlatform.instance.initClient(token);

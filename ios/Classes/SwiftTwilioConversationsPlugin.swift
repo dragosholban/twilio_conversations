@@ -86,6 +86,22 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                     result(nil)
                 }
             }
+        case "getMessagesCount" :
+            let arguments = call.arguments as! [String: Any]
+            let sid = arguments["sid"] as! String
+            client?.conversation(withSidOrUniqueName: sid) {(r, conversation) in
+                if (r.isSuccessful) {
+                    conversation?.getMessagesCount() { (r, count) in
+                        if(r.isSuccessful) {
+                            result(count)
+                        } else {
+                            result(nil)
+                        }
+                    }
+                } else {
+                    result(nil)
+                }
+            }
         case "getUnreadMessagesCount" :
             let arguments = call.arguments as! [String: Any]
             let sid = arguments["sid"] as! String

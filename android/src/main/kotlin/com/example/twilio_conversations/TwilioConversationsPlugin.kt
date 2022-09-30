@@ -138,6 +138,19 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+            "getMessagesCount" -> {
+                val sid = call.argument<String>("sid") ?: ""
+
+                mainScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val conversation = conversationsClient?.getConversation(sid)
+
+                        conversation?.getMessagesCount() {
+                            result.success(it)
+                        }
+                    }
+                }
+            }
             "getUnreadMessagesCount" -> {
                 val sid = call.argument<String>("sid") ?: ""
 

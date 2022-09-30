@@ -17,6 +17,10 @@ class Conversation with _$Conversation {
   factory Conversation.fromJson(Map<String, dynamic> json) =>
       _$ConversationFromJson(json);
 
+  Future<int?> getMessagesCount() {
+    return TwilioConversationsPlatform.instance.getMessagesCount(sid);
+  }
+
   Future<int?> getUreadMessagesCount() {
     return TwilioConversationsPlatform.instance.getUnreadMessagesCount(sid);
   }
