@@ -63,8 +63,10 @@ class TwilioConversations {
     return messages;
   }
 
-  Future sendMessage(String sid, String text) async {
-    return await TwilioConversationsPlatform.instance.sendMessage(sid, text);
+  Future sendMessage(
+      String sid, String? body, String? path, String? mimeType) async {
+    return await TwilioConversationsPlatform.instance
+        .sendMessage(sid, body, path, mimeType);
   }
 
   Stream<Map> getTwilioConversationsStream() {

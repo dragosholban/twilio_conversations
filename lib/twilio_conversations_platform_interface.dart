@@ -62,7 +62,7 @@ abstract class TwilioConversationsPlatform extends PlatformInterface {
         'getTemporaryContentUrlForMediaSid() has not been implemented.');
   }
 
-  Future sendMessage(String sid, String text) {
+  Future sendMessage(String sid, String? body, String? path, String? mimeType) {
     throw UnimplementedError('sendMessage() has not been implemented.');
   }
 

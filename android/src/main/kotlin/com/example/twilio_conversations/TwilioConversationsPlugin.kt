@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
@@ -126,12 +127,25 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                             conversation?.getMessageByIndex(
                                 index.toLong(),
                                 CallbackListener<Message>() {
+
+                                    val returnMedia = emptyList<HashMap<String, Any?>>().toMutableList()
+
+                                    it.attachedMedia.forEach { media ->
+                                        returnMedia.add(
+                                            hashMapOf<String, Any?>(
+                                                "mediaSid" to media.sid,
+                                            )
+                                        )
+                                    }
+
                                     result.success(
-                                        hashMapOf<String, String?>(
+                                        hashMapOf<String, Any?>(
                                             "messageSid" to it.sid,
                                             "messageBody" to it.body,
                                             "date" to it.dateCreated,
                                             "participantIdentity" to it.participant.identity,
+                                            "hasMedia" to it.attachedMedia.isNotEmpty(),
+                                            "attachedMedia" to returnMedia,
                                         )
                                     )
                                 })
@@ -234,17 +248,26 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
             }
             "sendMessage" -> {
                 val sid = call.argument<String>("sid") ?: ""
-                val text = call.argument<String>("text") ?: ""
+                val text = call.argument<String?>("text")
+                val path = call.argument<String?>("path")
+                val mimeType = call.argument<String>("mimeType") ?: ""
+                val fileName = call.argument<String>("fileName") ?: ""
 
                 mainScope.launch {
                     withContext(Dispatchers.IO) {
                         val conversation = conversationsClient?.getConversation(sid)
-                        conversation
-                            ?.prepareMessage()
-                            ?.setBody(text)
-                            ?.buildAndSend() {
-                                result.success(true)
-                            }
+                        val messageBuilder = conversation?.prepareMessage()
+                        if (text != null) {
+                            messageBuilder?.setBody(text)
+                        }
+                        if (path != null) {
+                            val inputStream = FileInputStream(path)
+                            val uploadLister = MediaUploadListener()
+                            messageBuilder?.addMedia(inputStream, mimeType, fileName, uploadLister)
+                        }
+                        messageBuilder?.buildAndSend() {
+                            result.success(true)
+                        }
                     }
                 }
             }

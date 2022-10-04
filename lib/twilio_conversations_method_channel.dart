@@ -85,10 +85,13 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
   }
 
   @override
-  Future sendMessage(String sid, String text) {
+  Future sendMessage(String sid, String? body, String? path, String? mimeType) {
+    print('Imagepath: $path');
     return methodChannel.invokeMethod('sendMessage', {
       'sid': sid,
-      'text': text,
+      'text': body,
+      'path': path,
+      'mimeType': mimeType,
     });
   }
 }

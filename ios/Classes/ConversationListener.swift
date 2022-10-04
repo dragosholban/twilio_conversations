@@ -15,6 +15,14 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
         conversation: TCHConversation,
         messageAdded message: TCHMessage) {
             debug("onMessageAdded => messageSid = \(String(describing: message.sid))")
+            var returnMedia: [[String: Any?]] = []
+            
+            for media in message.attachedMedia {
+                returnMedia.append([
+                    "mediaSid": media.sid,
+                ])
+            }
+            
             SwiftTwilioConversationsPlugin.addToSink(data: [
                 "event": "messageAdded",
                 "conversationSid": conversation.sid,
@@ -22,6 +30,8 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
                 "messageBody": message.body,
                 "date": message.dateCreated,
                 "participantIdentity": message.participant?.identity,
+                "hasMedia": message.attachedMedia.count > 0,
+                "attachedMedia": returnMedia,
             ])
             //        SwiftTwilioConversationsPlugin.flutterClientApi?.messageAddedConversationSid(
             //            conversationSid,

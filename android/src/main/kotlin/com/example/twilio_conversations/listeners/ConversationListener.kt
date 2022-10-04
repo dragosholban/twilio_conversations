@@ -12,14 +12,26 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
 
     override fun onMessageAdded(message: Message) {
         Log.d(TAG, "onMessageAdded => messageSid = ${message.sid}")
+        val returnMedia = emptyList<HashMap<String, Any?>>().toMutableList()
+
+        message.attachedMedia.forEach { media ->
+            returnMedia.add(
+                hashMapOf<String, Any?>(
+                    "mediaSid" to media.sid,
+                )
+            )
+        }
+
         TwilioConversationsPlugin.conversationsStreamHandler.sink?.success(
-            hashMapOf<String, String?>(
+            hashMapOf<String, Any?>(
                 "event" to "messageAdded",
                 "conversationSid" to conversationSid,
                 "messageSid" to message.sid,
                 "messageBody" to message.body,
                 "date" to message.dateCreated,
                 "participantIdentity" to message.participant.identity,
+                "hasMedia" to message.attachedMedia.isNotEmpty(),
+                "attachedMedia" to returnMedia,
             )
         )
 //        TwilioConversationsPlugin.flutterClientApi.messageAdded(

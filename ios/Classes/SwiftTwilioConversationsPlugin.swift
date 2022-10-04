@@ -72,11 +72,21 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                 if (r.isSuccessful) {
                     conversation?.message(withIndex: NSNumber(value: index)) { (r, message) in
                         if(r.isSuccessful) {
+                            var returnMedia: [[String: Any?]] = []
+                            
+                            for media in message?.attachedMedia ?? [] {
+                                returnMedia.append([
+                                    "mediaSid": media.sid,
+                                ])
+                            }
+                            
                             result([
                                 "messageSid": message?.sid,
                                 "messageBody": message?.body,
                                 "participantIdentity": message?.participant?.identity,
                                 "date": message?.dateCreated,
+                                "hasMedia": message?.attachedMedia.count ?? 0 > 0,
+                                "attachedMedia": returnMedia,
                             ])
                         } else {
                             result(nil)
@@ -175,11 +185,23 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
         case "sendMessage":
             let arguments = call.arguments as! [String: Any]
             let sid = arguments["sid"] as! String
-            let text = arguments["text"] as! String
+            let text = arguments["text"] as? String
+            let path = arguments["path"] as? String
+            let mimeType = arguments["mimeType"] as? String ?? ""
+            let fileName = arguments["fileName"] as? String ?? ""
             
             client?.conversation(withSidOrUniqueName: sid) {(r, conversation) in
                 if (r.isSuccessful) {
-                    conversation?.prepareMessage().setBody(text).buildAndSend() {(r, message) in
+                    let messageBuilder = conversation?.prepareMessage()
+                    if (text != nil) {
+                        messageBuilder?.setBody(text!)
+                    }
+                    if (path != nil) {
+                        if let inputStream = InputStream(fileAtPath: path!) {
+                            messageBuilder?.addMedia(inputStream: inputStream, contentType: mimeType, filename: fileName)
+                        }
+                    }
+                    messageBuilder?.buildAndSend() {(r, message) in
                         if(r.isSuccessful) {
                             result(true)
                         } else {
