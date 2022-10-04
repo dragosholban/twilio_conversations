@@ -25,6 +25,8 @@ mixin _$Message {
   String? get lastMessageDate => throw _privateConstructorUsedError;
   String? get participantIdentity => throw _privateConstructorUsedError;
   DateTime? get dateCreated => throw _privateConstructorUsedError;
+  bool get hasMedia => throw _privateConstructorUsedError;
+  List<String> get mediaSids => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -40,7 +42,9 @@ abstract class $MessageCopyWith<$Res> {
       String? body,
       String? lastMessageDate,
       String? participantIdentity,
-      DateTime? dateCreated});
+      DateTime? dateCreated,
+      bool hasMedia,
+      List<String> mediaSids});
 }
 
 /// @nodoc
@@ -58,6 +62,8 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
     Object? lastMessageDate = freezed,
     Object? participantIdentity = freezed,
     Object? dateCreated = freezed,
+    Object? hasMedia = freezed,
+    Object? mediaSids = freezed,
   }) {
     return _then(_value.copyWith(
       sid: sid == freezed
@@ -80,6 +86,14 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
           ? _value.dateCreated
           : dateCreated // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      hasMedia: hasMedia == freezed
+          ? _value.hasMedia
+          : hasMedia // ignore: cast_nullable_to_non_nullable
+              as bool,
+      mediaSids: mediaSids == freezed
+          ? _value.mediaSids
+          : mediaSids // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
@@ -95,7 +109,9 @@ abstract class _$$_MessageCopyWith<$Res> implements $MessageCopyWith<$Res> {
       String? body,
       String? lastMessageDate,
       String? participantIdentity,
-      DateTime? dateCreated});
+      DateTime? dateCreated,
+      bool hasMedia,
+      List<String> mediaSids});
 }
 
 /// @nodoc
@@ -114,6 +130,8 @@ class __$$_MessageCopyWithImpl<$Res> extends _$MessageCopyWithImpl<$Res>
     Object? lastMessageDate = freezed,
     Object? participantIdentity = freezed,
     Object? dateCreated = freezed,
+    Object? hasMedia = freezed,
+    Object? mediaSids = freezed,
   }) {
     return _then(_$_Message(
       sid: sid == freezed
@@ -136,19 +154,31 @@ class __$$_MessageCopyWithImpl<$Res> extends _$MessageCopyWithImpl<$Res>
           ? _value.dateCreated
           : dateCreated // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      hasMedia: hasMedia == freezed
+          ? _value.hasMedia
+          : hasMedia // ignore: cast_nullable_to_non_nullable
+              as bool,
+      mediaSids: mediaSids == freezed
+          ? _value._mediaSids
+          : mediaSids // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$_Message implements _Message {
+class _$_Message extends _Message {
   const _$_Message(
       {required this.sid,
       this.body,
       this.lastMessageDate,
       this.participantIdentity,
-      this.dateCreated});
+      this.dateCreated,
+      this.hasMedia = false,
+      final List<String> mediaSids = const []})
+      : _mediaSids = mediaSids,
+        super._();
 
   factory _$_Message.fromJson(Map<String, dynamic> json) =>
       _$$_MessageFromJson(json);
@@ -163,10 +193,20 @@ class _$_Message implements _Message {
   final String? participantIdentity;
   @override
   final DateTime? dateCreated;
+  @override
+  @JsonKey()
+  final bool hasMedia;
+  final List<String> _mediaSids;
+  @override
+  @JsonKey()
+  List<String> get mediaSids {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_mediaSids);
+  }
 
   @override
   String toString() {
-    return 'Message(sid: $sid, body: $body, lastMessageDate: $lastMessageDate, participantIdentity: $participantIdentity, dateCreated: $dateCreated)';
+    return 'Message(sid: $sid, body: $body, lastMessageDate: $lastMessageDate, participantIdentity: $participantIdentity, dateCreated: $dateCreated, hasMedia: $hasMedia, mediaSids: $mediaSids)';
   }
 
   @override
@@ -181,7 +221,10 @@ class _$_Message implements _Message {
             const DeepCollectionEquality()
                 .equals(other.participantIdentity, participantIdentity) &&
             const DeepCollectionEquality()
-                .equals(other.dateCreated, dateCreated));
+                .equals(other.dateCreated, dateCreated) &&
+            const DeepCollectionEquality().equals(other.hasMedia, hasMedia) &&
+            const DeepCollectionEquality()
+                .equals(other._mediaSids, _mediaSids));
   }
 
   @JsonKey(ignore: true)
@@ -192,7 +235,9 @@ class _$_Message implements _Message {
       const DeepCollectionEquality().hash(body),
       const DeepCollectionEquality().hash(lastMessageDate),
       const DeepCollectionEquality().hash(participantIdentity),
-      const DeepCollectionEquality().hash(dateCreated));
+      const DeepCollectionEquality().hash(dateCreated),
+      const DeepCollectionEquality().hash(hasMedia),
+      const DeepCollectionEquality().hash(_mediaSids));
 
   @JsonKey(ignore: true)
   @override
@@ -207,13 +252,16 @@ class _$_Message implements _Message {
   }
 }
 
-abstract class _Message implements Message {
+abstract class _Message extends Message {
   const factory _Message(
       {required final String sid,
       final String? body,
       final String? lastMessageDate,
       final String? participantIdentity,
-      final DateTime? dateCreated}) = _$_Message;
+      final DateTime? dateCreated,
+      final bool hasMedia,
+      final List<String> mediaSids}) = _$_Message;
+  const _Message._() : super._();
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$_Message.fromJson;
 
@@ -227,6 +275,10 @@ abstract class _Message implements Message {
   String? get participantIdentity;
   @override
   DateTime? get dateCreated;
+  @override
+  bool get hasMedia;
+  @override
+  List<String> get mediaSids;
   @override
   @JsonKey(ignore: true)
   _$$_MessageCopyWith<_$_Message> get copyWith =>

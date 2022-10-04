@@ -7,6 +7,7 @@ import androidx.annotation.NonNull
 import com.example.twilio_conversations.listeners.ConversationListenerImpl
 import com.twilio.conversations.*
 import com.twilio.conversations.extensions.getConversation
+import com.twilio.conversations.extensions.getTemporaryContentUrlsForMediaSids
 import com.twilio.util.ErrorInfo
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -187,18 +188,46 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                             100
                         ) { messages ->
                             val returnMessages =
-                                emptyList<HashMap<String, String?>>().toMutableList()
+                                emptyList<HashMap<String, Any?>>().toMutableList()
                             messages?.forEach {
+
+                                val returnMedia = emptyList<HashMap<String, Any?>>().toMutableList()
+
+                                it.attachedMedia.forEach { media ->
+                                    returnMedia.add(
+                                        hashMapOf<String, Any?>(
+                                            "mediaSid" to media.sid,
+                                        )
+                                    )
+                                }
+
                                 returnMessages.add(
-                                    hashMapOf<String, String?>(
+                                    hashMapOf<String, Any?>(
                                         "messageSid" to it.sid,
                                         "messageBody" to it.body,
                                         "date" to it.dateCreated,
                                         "participantIdentity" to it.participant.identity,
+                                        "hasMedia" to it.attachedMedia.isNotEmpty(),
+                                        "attachedMedia" to returnMedia,
                                     )
                                 )
                             }
                             result.success(returnMessages)
+                        }
+                    }
+                }
+            }
+            "getTemporaryContentUrlForMediaSid" -> {
+                val sid = call.argument<String>("sid") ?: ""
+
+                mainScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val urls: Map<String, String>? =
+                            conversationsClient?.getTemporaryContentUrlsForMediaSids(listOf(sid))
+                        if (urls?.isEmpty() != false) {
+                            result.success(null)
+                        } else {
+                            result.success(urls.entries.first().value)
                         }
                     }
                 }

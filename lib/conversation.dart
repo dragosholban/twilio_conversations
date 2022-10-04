@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:twilio_conversations/message.dart';
 import 'package:twilio_conversations/twilio_conversations_platform_interface.dart';
 
 part 'conversation.freezed.dart';
@@ -7,6 +8,7 @@ part 'conversation.g.dart';
 @freezed
 class Conversation with _$Conversation {
   const Conversation._();
+
   const factory Conversation({
     required String sid,
     String? friendlyName,
@@ -27,5 +29,22 @@ class Conversation with _$Conversation {
 
   Future<int?> setAllMessagesRead() {
     return TwilioConversationsPlatform.instance.setAllMessagesRead(sid);
+  }
+
+  Future<Message?> getLastMessage() async {
+    if (lastMessageIndex != null) {
+      final messageData = await TwilioConversationsPlatform.instance
+          .getMessageByIndex(sid, lastMessageIndex!);
+
+      if (messageData != null) {
+        return Message(
+          sid: messageData['messageSid'],
+          body: messageData['messageBody'],
+          dateCreated: DateTime.parse(messageData['date']),
+          participantIdentity: messageData['participantIdentity'],
+        );
+      }
+    }
+    return null;
   }
 }

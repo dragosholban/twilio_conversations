@@ -78,6 +78,13 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
   }
 
   @override
+  Future<String?> getTemporaryContentUrlForMediaSid(String sid) {
+    return methodChannel.invokeMethod('getTemporaryContentUrlForMediaSid', {
+      'sid': sid,
+    });
+  }
+
+  @override
   Future sendMessage(String sid, String text) {
     return methodChannel.invokeMethod('sendMessage', {
       'sid': sid,

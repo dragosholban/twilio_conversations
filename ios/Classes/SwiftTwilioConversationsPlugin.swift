@@ -142,14 +142,25 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                 if (r.isSuccessful) {
                     conversation?.getLastMessages(withCount: 100) { (r, messages) in
                         if(r.isSuccessful) {
-                            var returnMessages: [[String: String?]] = []
+                            var returnMessages: [[String: Any?]] = []
                             
                             for message in messages ?? [] {
+                            
+                                var returnMedia: [[String: Any?]] = []
+                                
+                                for media in message.attachedMedia {
+                                    returnMedia.append([
+                                        "mediaSid": media.sid,
+                                    ])
+                                }
+                                
                                 returnMessages.append([
                                     "messageSid": message.sid,
                                     "messageBody": message.body,
                                     "participantIdentity": message.participant?.identity,
                                     "date": message.dateCreated,
+                                    "hasMedia": message.attachedMedia.count > 0,
+                                    "attachedMedia": returnMedia,
                                 ])
                             }
                             result(returnMessages)
@@ -179,6 +190,21 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                     result(nil)
                 }
             }
+        case "getTemporaryContentUrlForMediaSid":
+            let arguments = call.arguments as! [String: Any]
+            let sid = arguments["sid"] as! String
+            
+            client?.getTemporaryContentUrlsFor(mediaSids: [sid], completion: { r, urls in
+                if (r.isSuccessful) {
+                    if (urls?.isEmpty ?? true) {
+                        result(nil)
+                    } else {
+                        result(urls!.first!.value.absoluteString);
+                    }
+                } else {
+                    result(nil);
+                }
+            })
         default:
             result(FlutterMethodNotImplemented)
         }

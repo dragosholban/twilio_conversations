@@ -45,25 +45,18 @@ class TwilioConversations {
     final data = await TwilioConversationsPlatform.instance
         .getMessageByIndex(sid, index);
 
-    final message = Message(
-      sid: data?['messageSid'],
-      body: data?['messageBody'],
-      dateCreated: DateTime.parse(data?['date']),
-      participantIdentity: data?['participantIdentity'],
-    );
-    return message;
+    if (data != null) {
+      return Message.fromMap(data);
+    }
+
+    return null;
   }
 
   Future<List<Message>> getMessages(String sid) async {
     final List<Message> messages = [];
     final data = await TwilioConversationsPlatform.instance.getMessages(sid);
     for (final item in data ?? []) {
-      final message = Message(
-        sid: item['messageSid'],
-        body: item['messageBody'],
-        dateCreated: DateTime.parse(item['date']),
-        participantIdentity: item['participantIdentity'],
-      );
+      final message = Message.fromMap(item);
       messages.add(message);
     }
 
