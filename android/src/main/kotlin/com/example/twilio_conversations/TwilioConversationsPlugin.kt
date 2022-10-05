@@ -179,6 +179,23 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+            "getConversationUserIsOnline" -> {
+                val sid = call.argument<String>("sid") ?: ""
+
+                mainScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val conversation = conversationsClient?.getConversation(sid)
+
+                        conversation?.participantsList?.forEach { participant ->
+                            if (participant.identity != conversationsClient?.myIdentity) {
+                                participant.getAndSubscribeUser { user ->
+                                    result.success(user?.isOnline);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             "setAllMessagesRead" -> {
                 val sid = call.argument<String>("sid") ?: ""
 
@@ -282,9 +299,10 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
             override fun onSuccess(conversationsClient: ConversationsClient) {
                 this@TwilioConversationsPlugin.conversationsClient = conversationsClient
                 conversationsStreamHandler.sink?.success(
-                    hashMapOf<String, String?>(
+                    hashMapOf<String, Any?>(
                         "event" to "clientCreated",
                         "identity" to conversationsClient.myIdentity,
+                        "reachabilityEnabled" to conversationsClient.isReachabilityEnabled,
                     )
                 )
                 conversationsClient.addListener(this@TwilioConversationsPlugin.mConversationsClientListener)
@@ -332,15 +350,33 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
             }
 
             override fun onUserUpdated(user: User?, reason: User.UpdateReason?) {
-
+                conversationsStreamHandler.sink?.success(
+                    hashMapOf<String, Any?>(
+                        "event" to "userUpdated",
+                        "identity" to user?.identity,
+                        "isOnline" to user?.isOnline,
+                    )
+                )
             }
 
             override fun onUserSubscribed(user: User?) {
-
+                conversationsStreamHandler.sink?.success(
+                    hashMapOf<String, Any?>(
+                        "event" to "userSubscribed",
+                        "identity" to user?.identity,
+                        "isOnline" to user?.isOnline,
+                    )
+                )
             }
 
             override fun onUserUnsubscribed(user: User?) {
-
+                conversationsStreamHandler.sink?.success(
+                    hashMapOf<String, Any?>(
+                        "event" to "userUnsubscribed",
+                        "identity" to user?.identity,
+                        "isOnline" to user?.isOnline,
+                    )
+                )
             }
 
             override fun onClientSynchronization(synchronizationStatus: ConversationsClient.SynchronizationStatus) {

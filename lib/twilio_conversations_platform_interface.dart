@@ -66,6 +66,11 @@ abstract class TwilioConversationsPlatform extends PlatformInterface {
     throw UnimplementedError('sendMessage() has not been implemented.');
   }
 
+  Future<bool?> getConversationUserIsOnline(String sid) {
+    throw UnimplementedError(
+        'getConversationUserIsOnline() has not been implemented.');
+  }
+
   Stream<Map> getTwilioConversationsStream() {
     throw UnimplementedError(
         'getTwilioConversationsStream() has not been implemented.');

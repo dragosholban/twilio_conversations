@@ -128,6 +128,28 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                     result(nil)
                 }
             }
+        case "getConversationUserIsOnline":
+            let arguments = call.arguments as! [String: Any]
+            let sid = arguments["sid"] as! String
+
+            client?.conversation(withSidOrUniqueName: sid) {(r, conversation) in
+                if (r.isSuccessful) {
+                    conversation?.participants().forEach() { (participant) in
+                        if (participant.identity != self.client?.user?.identity) {
+                            participant.subscribedUser() { (r, user) in
+                                if (r.isSuccessful) {
+                                    result(user?.isOnline());
+                                } else {
+                                    result(nil)
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    result(nil)
+                }
+            }
+            
         case "setAllMessagesRead" :
             let arguments = call.arguments as! [String: Any]
             let sid = arguments["sid"] as! String
@@ -250,6 +272,30 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
         SwiftTwilioConversationsPlugin.addToSink(data: [
             "event": "notificationAddedToConversation",
             "conversationSid": conversationSid,
+        ])
+    }
+    
+    public func conversationsClient(_ client: TwilioConversationsClient, user:TCHUser, updated:TCHUserUpdate) {
+        SwiftTwilioConversationsPlugin.addToSink(data: [
+            "event": "userUpdated",
+            "identity": user.identity,
+            "isOnline": user.isOnline(),
+        ])
+    }
+    
+    public func conversationsClient(_ client: TwilioConversationsClient, userSubscribed user:TCHUser) {
+        SwiftTwilioConversationsPlugin.addToSink(data: [
+            "event": "userSubscribed",
+            "identity": user.identity,
+            "isOnline": user.isOnline(),
+        ])
+    }
+    
+    public func conversationsClient(_ client: TwilioConversationsClient, userUnsubscribed user:TCHUser) {
+        SwiftTwilioConversationsPlugin.addToSink(data: [
+            "event": "userUnsubscribed",
+            "identity": user.identity,
+            "isOnline": user.isOnline(),
         ])
     }
 }

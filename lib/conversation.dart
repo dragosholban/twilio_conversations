@@ -47,4 +47,9 @@ class Conversation with _$Conversation {
     }
     return null;
   }
+
+  Future<bool?> getUserIsOnline() {
+    return TwilioConversationsPlatform.instance
+        .getConversationUserIsOnline(sid);
+  }
 }

@@ -94,4 +94,11 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
       'mimeType': mimeType,
     });
   }
+
+  @override
+  Future<bool?> getConversationUserIsOnline(String sid) {
+    return methodChannel.invokeMethod('getConversationUserIsOnline', {
+      'sid': sid,
+    });
+  }
 }
