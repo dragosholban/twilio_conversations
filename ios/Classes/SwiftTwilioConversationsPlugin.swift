@@ -25,6 +25,9 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
         case "initClient":
             let arguments = call.arguments as! [String: Any]
             let token = arguments["token"] as! String
+            
+            client?.shutdown()
+            SwiftTwilioConversationsPlugin.conversationListeners.removeAll()
             // Set up Twilio Conversations client
             TwilioConversationsClient.conversationsClient(withToken: token,
                                                           properties: nil,
@@ -70,27 +73,32 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
             
             client?.conversation(withSidOrUniqueName: sid) {(r, conversation) in
                 if (r.isSuccessful) {
-                    conversation?.message(withIndex: NSNumber(value: index)) { (r, message) in
-                        if(r.isSuccessful) {
-                            var returnMedia: [[String: Any?]] = []
-                            
-                            for media in message?.attachedMedia ?? [] {
-                                returnMedia.append([
-                                    "mediaSid": media.sid,
+                    if (conversation?.synchronizationStatus == TCHConversationSynchronizationStatus.all) {
+                        conversation?.message(withIndex: NSNumber(value: index)) { (r, message) in
+                            if(r.isSuccessful) {
+                                var returnMedia: [[String: Any?]] = []
+                                
+                                for media in message?.attachedMedia ?? [] {
+                                    returnMedia.append([
+                                        "mediaSid": media.sid,
+                                    ])
+                                }
+                                
+                                result([
+                                    "messageSid": message?.sid,
+                                    "messageBody": message?.body,
+                                    "participantIdentity": message?.participant?.identity,
+                                    "date": message?.dateCreated,
+                                    "hasMedia": message?.attachedMedia.count ?? 0 > 0,
+                                    "attachedMedia": returnMedia,
                                 ])
+                            } else {
+                                result(nil)
                             }
-                            
-                            result([
-                                "messageSid": message?.sid,
-                                "messageBody": message?.body,
-                                "participantIdentity": message?.participant?.identity,
-                                "date": message?.dateCreated,
-                                "hasMedia": message?.attachedMedia.count ?? 0 > 0,
-                                "attachedMedia": returnMedia,
-                            ])
-                        } else {
-                            result(nil)
                         }
+                    } else {
+                        result(nil)
+                
                     }
                 } else {
                     result(nil)
@@ -134,16 +142,20 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
 
             client?.conversation(withSidOrUniqueName: sid) {(r, conversation) in
                 if (r.isSuccessful) {
-                    conversation?.participants().forEach() { (participant) in
-                        if (participant.identity != self.client?.user?.identity) {
-                            participant.subscribedUser() { (r, user) in
-                                if (r.isSuccessful) {
-                                    result(user?.isOnline());
-                                } else {
-                                    result(nil)
+                    if (conversation?.synchronizationStatus == TCHConversationSynchronizationStatus.all) {
+                        conversation?.participants().forEach() { (participant) in
+                            if (participant.identity != self.client?.user?.identity) {
+                                participant.subscribedUser() { (r, user) in
+                                    if (r.isSuccessful) {
+                                        result(user?.isOnline());
+                                    } else {
+                                        result(nil)
+                                    }
                                 }
                             }
                         }
+                    } else {
+                        result(nil)
                     }
                 } else {
                     result(nil)

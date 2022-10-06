@@ -69,6 +69,8 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
             "initClient" -> {
                 val token = call.argument<String>("token") ?: ""
                 val props = ConversationsClient.Properties.newBuilder().createProperties()
+                conversationsClient?.shutdown()
+                conversationListeners.clear()
                 ConversationsClient.create(context, token, props, mConversationsClientCallback)
             }
             "myConversations" -> {
@@ -124,31 +126,36 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     withContext(Dispatchers.IO) {
                         val conversation = conversationsClient?.getConversation(sid)
                         index?.let { index ->
-                            conversation?.getMessageByIndex(
-                                index.toLong(),
-                                CallbackListener<Message>() {
+                            if (conversation?.synchronizationStatus == Conversation.SynchronizationStatus.ALL) {
+                                conversation.getMessageByIndex(
+                                    index.toLong(),
+                                    CallbackListener<Message>() {
 
-                                    val returnMedia = emptyList<HashMap<String, Any?>>().toMutableList()
+                                        val returnMedia =
+                                            emptyList<HashMap<String, Any?>>().toMutableList()
 
-                                    it.attachedMedia.forEach { media ->
-                                        returnMedia.add(
+                                        it.attachedMedia.forEach { media ->
+                                            returnMedia.add(
+                                                hashMapOf<String, Any?>(
+                                                    "mediaSid" to media.sid,
+                                                )
+                                            )
+                                        }
+
+                                        result.success(
                                             hashMapOf<String, Any?>(
-                                                "mediaSid" to media.sid,
+                                                "messageSid" to it.sid,
+                                                "messageBody" to it.body,
+                                                "date" to it.dateCreated,
+                                                "participantIdentity" to it.participant.identity,
+                                                "hasMedia" to it.attachedMedia.isNotEmpty(),
+                                                "attachedMedia" to returnMedia,
                                             )
                                         )
-                                    }
-
-                                    result.success(
-                                        hashMapOf<String, Any?>(
-                                            "messageSid" to it.sid,
-                                            "messageBody" to it.body,
-                                            "date" to it.dateCreated,
-                                            "participantIdentity" to it.participant.identity,
-                                            "hasMedia" to it.attachedMedia.isNotEmpty(),
-                                            "attachedMedia" to returnMedia,
-                                        )
-                                    )
-                                })
+                                    })
+                            } else {
+                                result.success(null)
+                            }
                         }
                     }
                 }
@@ -186,10 +193,12 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     withContext(Dispatchers.IO) {
                         val conversation = conversationsClient?.getConversation(sid)
 
-                        conversation?.participantsList?.forEach { participant ->
-                            if (participant.identity != conversationsClient?.myIdentity) {
-                                participant.getAndSubscribeUser { user ->
-                                    result.success(user?.isOnline);
+                        if (conversation?.synchronizationStatus == Conversation.SynchronizationStatus.ALL) {
+                            conversation.participantsList?.forEach { participant ->
+                                if (participant.identity != conversationsClient?.myIdentity) {
+                                    participant.getAndSubscribeUser { user ->
+                                        result.success(user?.isOnline);
+                                    }
                                 }
                             }
                         }
