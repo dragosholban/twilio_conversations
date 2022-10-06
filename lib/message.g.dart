@@ -14,6 +14,7 @@ _$_Message _$$_MessageFromJson(Map<String, dynamic> json) => _$_Message(
       dateCreated: json['dateCreated'] == null
           ? null
           : DateTime.parse(json['dateCreated'] as String),
+      index: json['index'] as int?,
       hasMedia: json['hasMedia'] as bool? ?? false,
       mediaSids: (json['mediaSids'] as List<dynamic>?)
               ?.map((e) => e as String)
@@ -28,6 +29,7 @@ Map<String, dynamic> _$$_MessageToJson(_$_Message instance) =>
       'lastMessageDate': instance.lastMessageDate,
       'participantIdentity': instance.participantIdentity,
       'dateCreated': instance.dateCreated?.toIso8601String(),
+      'index': instance.index,
       'hasMedia': instance.hasMedia,
       'mediaSids': instance.mediaSids,
     };

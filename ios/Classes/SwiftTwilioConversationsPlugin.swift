@@ -87,6 +87,7 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                                 result([
                                     "messageSid": message?.sid,
                                     "messageBody": message?.body,
+                                    "messageIndex": message?.index,
                                     "participantIdentity": message?.participant?.identity,
                                     "date": message?.dateCreated,
                                     "hasMedia": message?.attachedMedia.count ?? 0 > 0,
@@ -201,6 +202,7 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                                 returnMessages.append([
                                     "messageSid": message.sid,
                                     "messageBody": message.body,
+                                    "messageIndex": message.index,
                                     "participantIdentity": message.participant?.identity,
                                     "date": message.dateCreated,
                                     "hasMedia": message.attachedMedia.count > 0,

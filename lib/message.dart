@@ -14,6 +14,7 @@ class Message with _$Message {
     String? lastMessageDate,
     String? participantIdentity,
     DateTime? dateCreated,
+    int? index,
     @Default(false) bool hasMedia,
     @Default([]) List<String> mediaSids,
   }) = _Message;
@@ -31,6 +32,7 @@ class Message with _$Message {
       sid: map['messageSid'],
       body: map['messageBody'],
       dateCreated: DateTime.parse(map['date']),
+      index: map['messageIndex'],
       participantIdentity: map['participantIdentity'],
       hasMedia: map['hasMedia'] ?? false,
       mediaSids: mediaSids,

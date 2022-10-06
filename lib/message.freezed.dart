@@ -25,6 +25,7 @@ mixin _$Message {
   String? get lastMessageDate => throw _privateConstructorUsedError;
   String? get participantIdentity => throw _privateConstructorUsedError;
   DateTime? get dateCreated => throw _privateConstructorUsedError;
+  int? get index => throw _privateConstructorUsedError;
   bool get hasMedia => throw _privateConstructorUsedError;
   List<String> get mediaSids => throw _privateConstructorUsedError;
 
@@ -43,6 +44,7 @@ abstract class $MessageCopyWith<$Res> {
       String? lastMessageDate,
       String? participantIdentity,
       DateTime? dateCreated,
+      int? index,
       bool hasMedia,
       List<String> mediaSids});
 }
@@ -62,6 +64,7 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
     Object? lastMessageDate = freezed,
     Object? participantIdentity = freezed,
     Object? dateCreated = freezed,
+    Object? index = freezed,
     Object? hasMedia = freezed,
     Object? mediaSids = freezed,
   }) {
@@ -86,6 +89,10 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
           ? _value.dateCreated
           : dateCreated // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      index: index == freezed
+          ? _value.index
+          : index // ignore: cast_nullable_to_non_nullable
+              as int?,
       hasMedia: hasMedia == freezed
           ? _value.hasMedia
           : hasMedia // ignore: cast_nullable_to_non_nullable
@@ -110,6 +117,7 @@ abstract class _$$_MessageCopyWith<$Res> implements $MessageCopyWith<$Res> {
       String? lastMessageDate,
       String? participantIdentity,
       DateTime? dateCreated,
+      int? index,
       bool hasMedia,
       List<String> mediaSids});
 }
@@ -130,6 +138,7 @@ class __$$_MessageCopyWithImpl<$Res> extends _$MessageCopyWithImpl<$Res>
     Object? lastMessageDate = freezed,
     Object? participantIdentity = freezed,
     Object? dateCreated = freezed,
+    Object? index = freezed,
     Object? hasMedia = freezed,
     Object? mediaSids = freezed,
   }) {
@@ -154,6 +163,10 @@ class __$$_MessageCopyWithImpl<$Res> extends _$MessageCopyWithImpl<$Res>
           ? _value.dateCreated
           : dateCreated // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      index: index == freezed
+          ? _value.index
+          : index // ignore: cast_nullable_to_non_nullable
+              as int?,
       hasMedia: hasMedia == freezed
           ? _value.hasMedia
           : hasMedia // ignore: cast_nullable_to_non_nullable
@@ -175,6 +188,7 @@ class _$_Message extends _Message {
       this.lastMessageDate,
       this.participantIdentity,
       this.dateCreated,
+      this.index,
       this.hasMedia = false,
       final List<String> mediaSids = const []})
       : _mediaSids = mediaSids,
@@ -194,6 +208,8 @@ class _$_Message extends _Message {
   @override
   final DateTime? dateCreated;
   @override
+  final int? index;
+  @override
   @JsonKey()
   final bool hasMedia;
   final List<String> _mediaSids;
@@ -206,7 +222,7 @@ class _$_Message extends _Message {
 
   @override
   String toString() {
-    return 'Message(sid: $sid, body: $body, lastMessageDate: $lastMessageDate, participantIdentity: $participantIdentity, dateCreated: $dateCreated, hasMedia: $hasMedia, mediaSids: $mediaSids)';
+    return 'Message(sid: $sid, body: $body, lastMessageDate: $lastMessageDate, participantIdentity: $participantIdentity, dateCreated: $dateCreated, index: $index, hasMedia: $hasMedia, mediaSids: $mediaSids)';
   }
 
   @override
@@ -222,6 +238,7 @@ class _$_Message extends _Message {
                 .equals(other.participantIdentity, participantIdentity) &&
             const DeepCollectionEquality()
                 .equals(other.dateCreated, dateCreated) &&
+            const DeepCollectionEquality().equals(other.index, index) &&
             const DeepCollectionEquality().equals(other.hasMedia, hasMedia) &&
             const DeepCollectionEquality()
                 .equals(other._mediaSids, _mediaSids));
@@ -236,6 +253,7 @@ class _$_Message extends _Message {
       const DeepCollectionEquality().hash(lastMessageDate),
       const DeepCollectionEquality().hash(participantIdentity),
       const DeepCollectionEquality().hash(dateCreated),
+      const DeepCollectionEquality().hash(index),
       const DeepCollectionEquality().hash(hasMedia),
       const DeepCollectionEquality().hash(_mediaSids));
 
@@ -259,6 +277,7 @@ abstract class _Message extends Message {
       final String? lastMessageDate,
       final String? participantIdentity,
       final DateTime? dateCreated,
+      final int? index,
       final bool hasMedia,
       final List<String> mediaSids}) = _$_Message;
   const _Message._() : super._();
@@ -275,6 +294,8 @@ abstract class _Message extends Message {
   String? get participantIdentity;
   @override
   DateTime? get dateCreated;
+  @override
+  int? get index;
   @override
   bool get hasMedia;
   @override

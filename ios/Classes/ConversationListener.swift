@@ -28,20 +28,12 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
                 "conversationSid": conversation.sid,
                 "messageSid": message.sid,
                 "messageBody": message.body,
+                "messageIndex": message.index,
                 "date": message.dateCreated,
                 "participantIdentity": message.participant?.identity,
                 "hasMedia": message.attachedMedia.count > 0,
                 "attachedMedia": returnMedia,
             ])
-            //        SwiftTwilioConversationsPlugin.flutterClientApi?.messageAddedConversationSid(
-            //            conversationSid,
-            //            messageData: Mapper.messageToPigeon(message, conversationSid: conversationSid),
-            //            completion: { (error: Error?) in
-            //                if let errorMessage = error {
-            //                    self.debug("onMessageAdded => "
-            //                        + "Error calling FlutterClientApi: \(errorMessage)")
-            //                }
-            //            })
         }
     
     // onMessageUpdated
@@ -57,19 +49,10 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
                 "conversationSid": conversation.sid,
                 "messageSid": message.sid,
                 "messageBody": message.body,
+                "messageIndex": message.index,
                 "date": message.dateCreated,
                 "participantIdentity": message.participant?.identity,
             ])
-            //        SwiftTwilioConversationsPlugin.flutterClientApi?.messageUpdatedConversationSid(
-            //            conversationSid,
-            //            messageData: Mapper.messageToPigeon(message, conversationSid: conversationSid),
-            //            reason: Mapper.messageUpdateToString(updated),
-            //            completion: { (error: Error?) in
-            //                if let errorMessage = error {
-            //                    self.debug("onMessageUpdated => "
-            //                        + "Error calling FlutterClientApi: \(errorMessage)")
-            //                }
-            //            })
         }
     
     // onMessageDeleted
@@ -83,18 +66,10 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
                 "conversationSid": conversation.sid,
                 "messageSid": message.sid,
                 "messageBody": message.body,
+                "messageIndex": message.index,
                 "date": message.dateCreated,
                 "participantIdentity": message.participant?.identity,
             ])
-            //        SwiftTwilioConversationsPlugin.flutterClientApi?.messageDeletedConversationSid(
-            //            conversationSid,
-            //            messageData: Mapper.messageToPigeon(message, conversationSid: conversationSid),
-            //            completion: { (error: Error?) in
-            //                if let errorMessage = error {
-            //                    self.debug("onMessageDeleted => "
-            //                        + "Error calling FlutterClientApi: \(errorMessage)")
-            //                }
-            //            })
         }
     
     // onParticipantAdded
@@ -107,16 +82,8 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
                 "event": "participantAdded",
                 "conversationSid": conversation.sid,
                 "participantSid": participant.sid,
+                "lastReadMessageIndex": participant.lastReadMessageIndex,
             ])
-            //        SwiftTwilioConversationsPlugin.flutterClientApi?.participantAddedConversationSid(
-            //            conversationSid,
-            //            participantData: Mapper.participantToPigeon(participant, conversationSid: conversationSid)!,
-            //            completion: { (error: Error?) in
-            //                if let errorMessage = error {
-            //                    self.debug("onParticipantAdded => "
-            //                        + "Error calling FlutterClientApi: \(errorMessage)")
-            //                }
-            //            })
         }
     
     // onParticipantUpdated
@@ -132,18 +99,9 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
                 "conversationSid": conversation.sid,
                 "participantSid": participant.sid,
                 "participantIdentity": participant.identity,
+                "lastReadMessageIndex": participant.lastReadMessageIndex,
                 "reason": updated.rawValue,
             ])
-            //        SwiftTwilioConversationsPlugin.flutterClientApi?.participantUpdatedConversationSid(
-            //            conversationSid,
-            //            participantData: Mapper.participantToPigeon(participant, conversationSid: conversationSid)!,
-            //            reason: Mapper.participantUpdateToString(updated),
-            //            completion: { (error: Error?) in
-            //                if let errorMessage = error {
-            //                    self.debug("onParticipantUpdated => "
-            //                        + "Error calling FlutterClientApi: \(errorMessage)")
-            //                }
-            //            })
         }
     
     // onParticipantDeleted
@@ -157,15 +115,6 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
                 "conversationSid": conversation.sid,
                 "participantSid": participant.sid,
             ])
-            //        SwiftTwilioConversationsPlugin.flutterClientApi?.participantDeletedConversationSid(
-            //            conversationSid,
-            //            participantData: Mapper.participantToPigeon(participant, conversationSid: conversationSid)!,
-            //            completion: { (error: Error?) in
-            //                if let errorMessage = error {
-            //                    self.debug("onParticipantDeleted => "
-            //                        + "Error calling FlutterClientApi: \(errorMessage)")
-            //                }
-            //            })
         }
     
     // onTypingStarted
@@ -179,16 +128,6 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
                 "event": "typingStarted",
                 "conversationSid": conversation.sid,
             ])
-            //        SwiftTwilioConversationsPlugin.flutterClientApi?.typingStartedConversationSid(
-            //            conversationSid,
-            //            conversationData: Mapper.conversationToPigeon(conversation)!,
-            //            participantData: Mapper.participantToPigeon(participant, conversationSid: conversationSid)!,
-            //            completion: { (error: Error?) in
-            //                if let errorMessage = error {
-            //                    self.debug("onTypingStarted => "
-            //                        + "Error calling FlutterClientApi: \(errorMessage)")
-            //                }
-            //            })
         }
     
     // onTypingEnded
@@ -202,16 +141,6 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
                 "event": "typingEnded",
                 "conversationSid": conversation.sid,
             ])
-            //        SwiftTwilioConversationsPlugin.flutterClientApi?.typingEndedConversationSid(
-            //            conversationSid,
-            //            conversationData: Mapper.conversationToPigeon(conversation)!,
-            //            participantData: Mapper.participantToPigeon(participant, conversationSid: conversationSid)!,
-            //            completion: { (error: Error?) in
-            //                if let errorMessage = error {
-            //                    self.debug("onTypingEnded => "
-            //                        + "Error calling FlutterClientApi: \(errorMessage)")
-            //                }
-            //            })
             
         }
     
@@ -227,15 +156,6 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
                 "conversationSid": conversation.sid,
                 "status": syncStatus,
             ])
-            //        SwiftTwilioConversationsPlugin.flutterClientApi?.synchronizationChangedConversationSid(
-            //            conversationSid,
-            //            conversationData: Mapper.conversationToPigeon(conversation)!,
-            //            completion: { (error: Error?) in
-            //                if let errorMessage = error {
-            //                    self.debug("onSynchronizationChanged => "
-            //                        + "Error calling FlutterClientApi: \(errorMessage)")
-            //                }
-            //            })
         }
     
     // The ConversationListener Protocol for iOS duplicates some of the events

@@ -146,6 +146,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                             hashMapOf<String, Any?>(
                                                 "messageSid" to it.sid,
                                                 "messageBody" to it.body,
+                                                "messageIndex" to it.messageIndex,
                                                 "date" to it.dateCreated,
                                                 "participantIdentity" to it.participant.identity,
                                                 "hasMedia" to it.attachedMedia.isNotEmpty(),
@@ -245,6 +246,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                     hashMapOf<String, Any?>(
                                         "messageSid" to it.sid,
                                         "messageBody" to it.body,
+                                        "messageIndex" to it.messageIndex,
                                         "date" to it.dateCreated,
                                         "participantIdentity" to it.participant.identity,
                                         "hasMedia" to it.attachedMedia.isNotEmpty(),
