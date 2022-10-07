@@ -114,6 +114,7 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
                 "event": "participantDeleted",
                 "conversationSid": conversation.sid,
                 "participantSid": participant.sid,
+                "participantIdentity": participant.identity,
             ])
         }
     
@@ -127,6 +128,8 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
             SwiftTwilioConversationsPlugin.addToSink(data: [
                 "event": "typingStarted",
                 "conversationSid": conversation.sid,
+                "participantSid": participant.sid,
+                "participantIdentity": participant.identity,
             ])
         }
     
@@ -140,6 +143,8 @@ public class ConversationListener: NSObject, TCHConversationDelegate {
             SwiftTwilioConversationsPlugin.addToSink(data: [
                 "event": "typingEnded",
                 "conversationSid": conversation.sid,
+                "participantSid": participant.sid,
+                "participantIdentity": participant.identity,
             ])
             
         }

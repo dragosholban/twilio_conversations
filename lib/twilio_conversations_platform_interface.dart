@@ -75,4 +75,8 @@ abstract class TwilioConversationsPlatform extends PlatformInterface {
     throw UnimplementedError(
         'getTwilioConversationsStream() has not been implemented.');
   }
+
+  Future typing(String sid) {
+    throw UnimplementedError('typing() has not been implemented.');
+  }
 }

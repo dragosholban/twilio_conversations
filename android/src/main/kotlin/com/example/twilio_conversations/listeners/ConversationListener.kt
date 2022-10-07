@@ -109,12 +109,14 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
     override fun onTypingStarted(conversation: Conversation, participant: Participant) {
         Log.d(
             TAG,
-            "onTypingStarted => conversationSid = ${conversation.sid}, participantSid = ${conversation.sid}"
+            "onTypingStarted => conversationSid = ${conversation.sid}, participantSid = ${participant.sid}"
         )
         TwilioConversationsPlugin.conversationsStreamHandler.sink?.success(
             hashMapOf<String, String?>(
                 "event" to "typingStarted",
                 "conversationSid" to conversationSid,
+                "participantSid" to participant.sid,
+                "participantIdentity" to participant.identity,
             )
         )
     }
@@ -128,6 +130,8 @@ class ConversationListenerImpl(private val conversationSid: String) : Conversati
             hashMapOf<String, String?>(
                 "event" to "typingEnded",
                 "conversationSid" to conversationSid,
+                "participantSid" to participant.sid,
+                "participantIdentity" to participant.identity,
             )
         )
     }

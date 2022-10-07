@@ -101,4 +101,11 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
       'sid': sid,
     });
   }
+
+  @override
+  Future typing(String sid) {
+    return methodChannel.invokeMethod('typing', {
+      'sid': sid,
+    });
+  }
 }

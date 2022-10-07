@@ -299,6 +299,22 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+            "typing" -> {
+                val sid = call.argument<String>("sid") ?: ""
+
+                mainScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val conversation = conversationsClient?.getConversation(sid)
+                        conversation?.typing()
+                        result.success(true)
+                    }
+                }
+            }
+            "registerFCMToken" -> {
+                val token = call.argument<String>("token") ?: ""
+
+                conversationsClient?.registerFCMToken(ConversationsClient.FCMToken(token)) {}
+            }
             else -> {
                 result.notImplemented()
             }

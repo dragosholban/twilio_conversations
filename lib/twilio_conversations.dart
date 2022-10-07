@@ -72,4 +72,8 @@ class TwilioConversations {
   Stream<Map> getTwilioConversationsStream() {
     return TwilioConversationsPlatform.instance.getTwilioConversationsStream();
   }
+
+  Future typing(String sid) async {
+    return await TwilioConversationsPlatform.instance.typing(sid);
+  }
 }

@@ -248,6 +248,19 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                     result(nil)
                 }
             }
+        case "typing":
+            let arguments = call.arguments as! [String: Any]
+            let sid = arguments["sid"] as! String
+
+            client?.conversation(withSidOrUniqueName: sid) {(r, conversation) in
+                if (r.isSuccessful) {
+                    conversation?.typing()
+                    result(true)
+                } else {
+                    result(nil)
+                }
+            }
+            
         case "getTemporaryContentUrlForMediaSid":
             let arguments = call.arguments as! [String: Any]
             let sid = arguments["sid"] as! String
