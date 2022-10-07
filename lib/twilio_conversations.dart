@@ -76,4 +76,12 @@ class TwilioConversations {
   Future typing(String sid) async {
     return await TwilioConversationsPlatform.instance.typing(sid);
   }
+
+  Future registerFCMToken(String token) async {
+    return await TwilioConversationsPlatform.instance.registerFCMToken(token);
+  }
+
+  Future registerAPNToken(String token) async {
+    return await TwilioConversationsPlatform.instance.registerAPNToken(token);
+  }
 }

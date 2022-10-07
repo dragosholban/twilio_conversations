@@ -79,4 +79,12 @@ abstract class TwilioConversationsPlatform extends PlatformInterface {
   Future typing(String sid) {
     throw UnimplementedError('typing() has not been implemented.');
   }
+
+  Future registerFCMToken(String token) {
+    throw UnimplementedError('registerFCMToken() has not been implemented.');
+  }
+
+  Future registerAPNToken(String token) {
+    throw UnimplementedError('registerAPNToken() has not been implemented.');
+  }
 }

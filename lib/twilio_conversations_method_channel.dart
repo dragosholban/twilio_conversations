@@ -108,4 +108,18 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
       'sid': sid,
     });
   }
+
+  @override
+  Future registerFCMToken(String token) {
+    return methodChannel.invokeMethod('registerFCMToken', {
+      'token': token,
+    });
+  }
+
+  @override
+  Future registerAPNToken(String token) {
+    return methodChannel.invokeMethod('registerAPNToken', {
+      'token': token,
+    });
+  }
 }

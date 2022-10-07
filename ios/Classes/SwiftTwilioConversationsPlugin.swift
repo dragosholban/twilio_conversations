@@ -276,6 +276,19 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                     result(nil);
                 }
             })
+            
+        case "registerAPNToken":
+            let arguments = call.arguments as! [String: Any]
+            let token = arguments["token"] as! String
+            
+            client?.register(withNotificationToken: token.data(using: .utf8)!) {r in
+                if (r.isSuccessful) {
+                    result(true)
+                } else {
+                    result(false);
+                }
+            }
+            
         default:
             result(FlutterMethodNotImplemented)
         }
