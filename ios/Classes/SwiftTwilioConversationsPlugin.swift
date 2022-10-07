@@ -4,6 +4,7 @@ import TwilioConversationsClient
 
 public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConversationsClientDelegate {
     private var client: TwilioConversationsClient?
+    private var pushToken: Data?
     private static var conversationsStreamHandler: TwilioConversationsStreamHandler = TwilioConversationsStreamHandler()
     public static var conversationListeners: [String: ConversationListener] = [:]
     
@@ -14,10 +15,23 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
         
         let instance = SwiftTwilioConversationsPlugin()
         registrar.addMethodCallDelegate(instance, channel: methodChannel)
+        registrar.addApplicationDelegate(instance)
     }
     
     public static func addToSink(data: Any) {
         SwiftTwilioConversationsPlugin.conversationsStreamHandler.sink?(data)
+    }
+    
+    public func application(
+        _ application: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+            pushToken = deviceToken;
+        }
+    
+    public func application(_ application: UIApplication,
+                            didFailToRegisterForRemoteNotificationsWithError
+        error: Error) {
+        
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -278,15 +292,16 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
             })
             
         case "registerAPNToken":
-            let arguments = call.arguments as! [String: Any]
-            let token = arguments["token"] as! String
-            
-            client?.register(withNotificationToken: token.data(using: .utf8)!) {r in
-                if (r.isSuccessful) {
-                    result(true)
-                } else {
-                    result(false);
+            if (pushToken != nil) {
+                client?.register(withNotificationToken: pushToken!) {r in
+                    if (r.isSuccessful) {
+                        result(true)
+                    } else {
+                        result(false);
+                    }
                 }
+            } else {
+                result(false);
             }
             
         default:
