@@ -28,6 +28,10 @@ abstract class TwilioConversationsPlatform extends PlatformInterface {
     throw UnimplementedError('initClient() has not been implemented.');
   }
 
+  Future<bool?> shutdown() {
+    throw UnimplementedError('shutdown() has not been implemented.');
+  }
+
   Future<List?> myConversations() {
     throw UnimplementedError('myConversations() has not been implemented.');
   }

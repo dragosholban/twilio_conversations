@@ -45,7 +45,8 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
     private var conversationsClient: ConversationsClient? = null
 
     companion object {
-        lateinit var conversationsStreamHandler: TwilioConversationsStreamHandler
+        var conversationsStreamHandler: TwilioConversationsStreamHandler =
+            TwilioConversationsStreamHandler()
     }
 
     // The scope for the UI thread
@@ -55,7 +56,6 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "twilio_conversations")
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
-        conversationsStreamHandler = TwilioConversationsStreamHandler()
 
         val myEventChannel =
             EventChannel(flutterPluginBinding.binaryMessenger, "twilio_conversations_stream")
@@ -69,9 +69,17 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
             "initClient" -> {
                 val token = call.argument<String>("token") ?: ""
                 val props = ConversationsClient.Properties.newBuilder().createProperties()
-                conversationsClient?.shutdown()
+                try {
+                    conversationsClient?.shutdown()
+                } catch (e:Exception) {}
                 conversationListeners.clear()
                 ConversationsClient.create(context, token, props, mConversationsClientCallback)
+            }
+            "shutdown" -> {
+                try {
+                    conversationsClient?.shutdown()
+                } catch (e:Exception) {}
+                conversationListeners.clear()
             }
             "myConversations" -> {
                 val conversations = emptyList<HashMap<String, Any?>>().toMutableList()

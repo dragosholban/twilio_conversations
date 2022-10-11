@@ -12,6 +12,10 @@ class TwilioConversations {
     return TwilioConversationsPlatform.instance.initClient(token);
   }
 
+  Future<bool?> shutdown() {
+    return TwilioConversationsPlatform.instance.shutdown();
+  }
+
   Future<List<Conversation>> myConversations(String token) async {
     final List<Conversation> conversations = [];
     final data = await TwilioConversationsPlatform.instance.myConversations();

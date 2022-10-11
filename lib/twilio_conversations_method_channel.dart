@@ -20,6 +20,12 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
   }
 
   @override
+  Future<bool?> shutdown() async {
+    final result = await methodChannel.invokeMethod<bool>('shutdown');
+    return result;
+  }
+
+  @override
   Future<List?> myConversations() async {
     final result = await methodChannel.invokeMethod<List>('myConversations');
     return result;

@@ -55,6 +55,10 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                 }
                 result(initResult.isSuccessful)
             }
+        case "shutdown":
+            client?.shutdown()
+            SwiftTwilioConversationsPlugin.conversationListeners.removeAll()
+            result(true)
         case "myConversations":
             var conversations: [[String: Any?]] = []
             
