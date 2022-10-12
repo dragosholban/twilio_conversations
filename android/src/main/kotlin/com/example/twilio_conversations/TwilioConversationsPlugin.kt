@@ -71,33 +71,48 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                 val props = ConversationsClient.Properties.newBuilder().createProperties()
                 try {
                     conversationsClient?.shutdown()
-                } catch (e:Exception) {}
+                } catch (e: Exception) {
+                    Log.d(TAG, "initClient shutdown: ${e.message}")
+                }
                 conversationListeners.clear()
                 ConversationsClient.create(context, token, props, mConversationsClientCallback)
             }
             "shutdown" -> {
                 try {
                     conversationsClient?.shutdown()
-                } catch (e:Exception) {}
+                } catch (e: Exception) {
+                    Log.d(TAG, "shutdown: ${e.message}")
+                }
                 conversationListeners.clear()
+                result.success(true)
             }
             "myConversations" -> {
                 val conversations = emptyList<HashMap<String, Any?>>().toMutableList()
-                conversationsClient?.myConversations?.forEach { conversation ->
-                    conversations += hashMapOf(
-                        Pair("sid", conversation.sid),
-                        Pair("friendlyName", conversation.friendlyName),
-                        Pair("lastMessageDate", dateToString(conversation.lastMessageDate)),
-                        Pair("lastMessageIndex", conversation.lastMessageIndex),
-                    )
+                try {
+                    conversationsClient?.myConversations?.forEach { conversation ->
+                        conversations += hashMapOf(
+                            Pair("sid", conversation.sid),
+                            Pair("friendlyName", conversation.friendlyName),
+                            Pair("lastMessageDate", dateToString(conversation.lastMessageDate)),
+                            Pair("lastMessageIndex", conversation.lastMessageIndex),
+                        )
 
-                    // Setting flutter event listener for the given channel if one does not yet exist.
-                    if (conversation.sid != null && !conversationListeners.containsKey(conversation.sid)) {
-                        Log.d(TAG, "setupConversationListener => conversation: ${conversation.sid}")
-                        conversationListeners[conversation.sid] =
-                            ConversationListenerImpl(conversation.sid)
-                        conversation.addListener(conversationListeners[conversation.sid])
+                        // Setting flutter event listener for the given channel if one does not yet exist.
+                        if (conversation.sid != null && !conversationListeners.containsKey(
+                                conversation.sid
+                            )
+                        ) {
+                            Log.d(
+                                TAG,
+                                "setupConversationListener => conversation: ${conversation.sid}"
+                            )
+                            conversationListeners[conversation.sid] =
+                                ConversationListenerImpl(conversation.sid)
+                            conversation.addListener(conversationListeners[conversation.sid])
+                        }
                     }
+                } catch (e: Exception) {
+                    Log.d(TAG, "myConversations: ${e.message}")
                 }
 
                 result.success(conversations)
@@ -107,21 +122,26 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
                 mainScope.launch {
                     withContext(Dispatchers.IO) {
-                        val conversation = conversationsClient?.getConversation(sid)
-                        if (conversation != null) {
-                            result.success(
-                                hashMapOf(
-                                    Pair("sid", conversation.sid),
-                                    Pair("friendlyName", conversation.friendlyName),
-                                    Pair(
-                                        "lastMessageDate",
-                                        dateToString(conversation.lastMessageDate),
-                                    ),
-                                    Pair("lastMessageIndex", conversation.lastMessageIndex)
+                        try {
+                            val conversation = conversationsClient?.getConversation(sid)
+                            if (conversation != null) {
+                                result.success(
+                                    hashMapOf(
+                                        Pair("sid", conversation.sid),
+                                        Pair("friendlyName", conversation.friendlyName),
+                                        Pair(
+                                            "lastMessageDate",
+                                            dateToString(conversation.lastMessageDate),
+                                        ),
+                                        Pair("lastMessageIndex", conversation.lastMessageIndex)
+                                    )
                                 )
-                            )
-                        } else {
-                            result.success(hashMapOf<String, String?>());
+                            } else {
+                                result.success(hashMapOf<String, String?>());
+                            }
+                        } catch (e: Exception) {
+                            Log.d(TAG, "getConversation: ${e.message}")
+                            result.error("getConversation", e.message, "");
                         }
                     }
                 }
@@ -132,39 +152,44 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
                 mainScope.launch {
                     withContext(Dispatchers.IO) {
-                        val conversation = conversationsClient?.getConversation(sid)
-                        index?.let { index ->
-                            if (conversation?.synchronizationStatus == Conversation.SynchronizationStatus.ALL) {
-                                conversation.getMessageByIndex(
-                                    index.toLong(),
-                                    CallbackListener<Message>() {
+                        try {
+                            val conversation = conversationsClient?.getConversation(sid)
+                            index?.let { index ->
+                                if (conversation?.synchronizationStatus == Conversation.SynchronizationStatus.ALL) {
+                                    conversation.getMessageByIndex(
+                                        index.toLong(),
+                                        CallbackListener<Message>() {
 
-                                        val returnMedia =
-                                            emptyList<HashMap<String, Any?>>().toMutableList()
+                                            val returnMedia =
+                                                emptyList<HashMap<String, Any?>>().toMutableList()
 
-                                        it.attachedMedia.forEach { media ->
-                                            returnMedia.add(
+                                            it.attachedMedia.forEach { media ->
+                                                returnMedia.add(
+                                                    hashMapOf<String, Any?>(
+                                                        "mediaSid" to media.sid,
+                                                    )
+                                                )
+                                            }
+
+                                            result.success(
                                                 hashMapOf<String, Any?>(
-                                                    "mediaSid" to media.sid,
+                                                    "messageSid" to it.sid,
+                                                    "messageBody" to it.body,
+                                                    "messageIndex" to it.messageIndex,
+                                                    "date" to it.dateCreated,
+                                                    "participantIdentity" to it.participant.identity,
+                                                    "hasMedia" to it.attachedMedia.isNotEmpty(),
+                                                    "attachedMedia" to returnMedia,
                                                 )
                                             )
-                                        }
-
-                                        result.success(
-                                            hashMapOf<String, Any?>(
-                                                "messageSid" to it.sid,
-                                                "messageBody" to it.body,
-                                                "messageIndex" to it.messageIndex,
-                                                "date" to it.dateCreated,
-                                                "participantIdentity" to it.participant.identity,
-                                                "hasMedia" to it.attachedMedia.isNotEmpty(),
-                                                "attachedMedia" to returnMedia,
-                                            )
-                                        )
-                                    })
-                            } else {
-                                result.success(null)
+                                        })
+                                } else {
+                                    result.success(null)
+                                }
                             }
+                        } catch (e: Exception) {
+                            Log.d(TAG, "getMessageByIndex: ${e.message}")
+                            result.error("getMessageByIndex", e.message, "");
                         }
                     }
                 }
@@ -174,10 +199,15 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
                 mainScope.launch {
                     withContext(Dispatchers.IO) {
-                        val conversation = conversationsClient?.getConversation(sid)
+                        try {
+                            val conversation = conversationsClient?.getConversation(sid)
 
-                        conversation?.getMessagesCount() {
-                            result.success(it)
+                            conversation?.getMessagesCount() {
+                                result.success(it)
+                            }
+                        } catch (e: Exception) {
+                            Log.d(TAG, "getUnreadMessagesCount: ${e.message}")
+                            result.error("getUnreadMessagesCount", e.message, "");
                         }
                     }
                 }
@@ -187,10 +217,14 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
                 mainScope.launch {
                     withContext(Dispatchers.IO) {
-                        val conversation = conversationsClient?.getConversation(sid)
+                        try {
+                            val conversation = conversationsClient?.getConversation(sid)
 
-                        conversation?.getUnreadMessagesCount() {
-                            result.success(it)
+                            conversation?.getUnreadMessagesCount() {
+                                result.success(it)
+                            }
+                        } catch (e: Exception) {
+                            result.error("getUnreadMessagesCount", e.message, "");
                         }
                     }
                 }
@@ -200,16 +234,21 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
                 mainScope.launch {
                     withContext(Dispatchers.IO) {
-                        val conversation = conversationsClient?.getConversation(sid)
+                        try {
+                            val conversation = conversationsClient?.getConversation(sid)
 
-                        if (conversation?.synchronizationStatus == Conversation.SynchronizationStatus.ALL) {
-                            conversation.participantsList?.forEach { participant ->
-                                if (participant.identity != conversationsClient?.myIdentity) {
-                                    participant.getAndSubscribeUser { user ->
-                                        result.success(user?.isOnline);
+                            if (conversation?.synchronizationStatus == Conversation.SynchronizationStatus.ALL) {
+                                conversation.participantsList?.forEach { participant ->
+                                    if (participant.identity != conversationsClient?.myIdentity) {
+                                        participant.getAndSubscribeUser { user ->
+                                            result.success(user?.isOnline);
+                                        }
                                     }
                                 }
                             }
+                        } catch (e: Exception) {
+                            Log.d(TAG, "getConversationUserIsOnline: ${e.message}")
+                            result.error("getConversationUserIsOnline", e.message, "");
                         }
                     }
                 }
@@ -219,10 +258,15 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
                 mainScope.launch {
                     withContext(Dispatchers.IO) {
-                        val conversation = conversationsClient?.getConversation(sid)
+                        try {
+                            val conversation = conversationsClient?.getConversation(sid)
 
-                        conversation?.setAllMessagesRead() {
-                            result.success(it)
+                            conversation?.setAllMessagesRead() {
+                                result.success(it)
+                            }
+                        } catch (e: Exception) {
+                            Log.d(TAG, "setAllMessagesRead: ${e.message}")
+                            result.error("setAllMessagesRead", e.message, "");
                         }
                     }
                 }
@@ -232,37 +276,43 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
                 mainScope.launch {
                     withContext(Dispatchers.IO) {
-                        val conversation = conversationsClient?.getConversation(sid)
-                        conversation?.getLastMessages(
-                            100
-                        ) { messages ->
-                            val returnMessages =
-                                emptyList<HashMap<String, Any?>>().toMutableList()
-                            messages?.forEach {
+                        try {
+                            val conversation = conversationsClient?.getConversation(sid)
+                            conversation?.getLastMessages(
+                                100
+                            ) { messages ->
+                                val returnMessages =
+                                    emptyList<HashMap<String, Any?>>().toMutableList()
+                                messages?.forEach {
 
-                                val returnMedia = emptyList<HashMap<String, Any?>>().toMutableList()
+                                    val returnMedia =
+                                        emptyList<HashMap<String, Any?>>().toMutableList()
 
-                                it.attachedMedia.forEach { media ->
-                                    returnMedia.add(
+                                    it.attachedMedia.forEach { media ->
+                                        returnMedia.add(
+                                            hashMapOf<String, Any?>(
+                                                "mediaSid" to media.sid,
+                                            )
+                                        )
+                                    }
+
+                                    returnMessages.add(
                                         hashMapOf<String, Any?>(
-                                            "mediaSid" to media.sid,
+                                            "messageSid" to it.sid,
+                                            "messageBody" to it.body,
+                                            "messageIndex" to it.messageIndex,
+                                            "date" to it.dateCreated,
+                                            "participantIdentity" to it.participant.identity,
+                                            "hasMedia" to it.attachedMedia.isNotEmpty(),
+                                            "attachedMedia" to returnMedia,
                                         )
                                     )
                                 }
-
-                                returnMessages.add(
-                                    hashMapOf<String, Any?>(
-                                        "messageSid" to it.sid,
-                                        "messageBody" to it.body,
-                                        "messageIndex" to it.messageIndex,
-                                        "date" to it.dateCreated,
-                                        "participantIdentity" to it.participant.identity,
-                                        "hasMedia" to it.attachedMedia.isNotEmpty(),
-                                        "attachedMedia" to returnMedia,
-                                    )
-                                )
+                                result.success(returnMessages)
                             }
-                            result.success(returnMessages)
+                        } catch (e: Exception) {
+                            Log.d(TAG, "getMessages: ${e.message}")
+                            result.error("getMessages", e.message, "");
                         }
                     }
                 }
@@ -272,12 +322,17 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
                 mainScope.launch {
                     withContext(Dispatchers.IO) {
-                        val urls: Map<String, String>? =
-                            conversationsClient?.getTemporaryContentUrlsForMediaSids(listOf(sid))
-                        if (urls?.isEmpty() != false) {
-                            result.success(null)
-                        } else {
-                            result.success(urls.entries.first().value)
+                        try {
+                            val urls: Map<String, String>? =
+                                conversationsClient?.getTemporaryContentUrlsForMediaSids(listOf(sid))
+                            if (urls?.isEmpty() != false) {
+                                result.success(null)
+                            } else {
+                                result.success(urls.entries.first().value)
+                            }
+                        } catch (e: Exception) {
+                            Log.d(TAG, "getTemporaryContentUrlForMediaSid: ${e.message}")
+                            result.error("getTemporaryContentUrlForMediaSid", e.message, "");
                         }
                     }
                 }
@@ -291,18 +346,28 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
                 mainScope.launch {
                     withContext(Dispatchers.IO) {
-                        val conversation = conversationsClient?.getConversation(sid)
-                        val messageBuilder = conversation?.prepareMessage()
-                        if (text != null) {
-                            messageBuilder?.setBody(text)
-                        }
-                        if (path != null) {
-                            val inputStream = FileInputStream(path)
-                            val uploadLister = MediaUploadListener()
-                            messageBuilder?.addMedia(inputStream, mimeType, fileName, uploadLister)
-                        }
-                        messageBuilder?.buildAndSend() {
-                            result.success(true)
+                        try {
+                            val conversation = conversationsClient?.getConversation(sid)
+                            val messageBuilder = conversation?.prepareMessage()
+                            if (text != null) {
+                                messageBuilder?.setBody(text)
+                            }
+                            if (path != null) {
+                                val inputStream = FileInputStream(path)
+                                val uploadLister = MediaUploadListener()
+                                messageBuilder?.addMedia(
+                                    inputStream,
+                                    mimeType,
+                                    fileName,
+                                    uploadLister
+                                )
+                            }
+                            messageBuilder?.buildAndSend() {
+                                result.success(true)
+                            }
+                        } catch (e: Exception) {
+                            Log.d(TAG, "sendMessage: ${e.message}")
+                            result.error("sendMessage", e.message, "");
                         }
                     }
                 }
@@ -312,16 +377,26 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
                 mainScope.launch {
                     withContext(Dispatchers.IO) {
-                        val conversation = conversationsClient?.getConversation(sid)
-                        conversation?.typing()
-                        result.success(true)
+                        try {
+                            val conversation = conversationsClient?.getConversation(sid)
+                            conversation?.typing()
+                            result.success(true)
+                        } catch (e: Exception) {
+                            Log.d(TAG, "typing: ${e.message}")
+                            result.error("typing", e.message, "");
+                        }
                     }
                 }
             }
             "registerFCMToken" -> {
                 val token = call.argument<String>("token") ?: ""
 
-                conversationsClient?.registerFCMToken(ConversationsClient.FCMToken(token)) {}
+                try {
+                    conversationsClient?.registerFCMToken(ConversationsClient.FCMToken(token)) {}
+                } catch (e: Exception) {
+                    Log.d(TAG, "registerFCMToken: ${e.message}")
+                    result.error("registerFCMToken", e.message, "");
+                }
             }
             else -> {
                 result.notImplemented()
@@ -342,7 +417,11 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                 )
                 conversationsClient.addListener(this@TwilioConversationsPlugin.mConversationsClientListener)
                 Log.d(TAG, "Success creating Twilio Conversations Client")
-                this@TwilioConversationsPlugin.result?.success(true)
+                try {
+                    this@TwilioConversationsPlugin.result?.success(true)
+                } catch (e: Exception) {
+                    Log.e(TAG, e.message ?: "")
+                }
             }
 
             override fun onError(errorInfo: ErrorInfo) {
