@@ -14,6 +14,7 @@ class Conversation with _$Conversation {
     String? friendlyName,
     String? lastMessageDate,
     int? lastMessageIndex,
+    String? attributes,
   }) = _Conversation;
 
   factory Conversation.fromJson(Map<String, dynamic> json) =>

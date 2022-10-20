@@ -70,6 +70,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                 val token = call.argument<String>("token") ?: ""
                 val props = ConversationsClient.Properties.newBuilder().createProperties()
                 try {
+                    conversationsClient?.removeAllListeners()
                     conversationsClient?.shutdown()
                 } catch (e: Exception) {
                     Log.d(TAG, "initClient shutdown: ${e.message}")
@@ -79,6 +80,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
             }
             "shutdown" -> {
                 try {
+                    conversationsClient?.removeAllListeners()
                     conversationsClient?.shutdown()
                 } catch (e: Exception) {
                     Log.d(TAG, "shutdown: ${e.message}")
@@ -133,7 +135,8 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                             "lastMessageDate",
                                             dateToString(conversation.lastMessageDate),
                                         ),
-                                        Pair("lastMessageIndex", conversation.lastMessageIndex)
+                                        Pair("lastMessageIndex", conversation.lastMessageIndex),
+                                        Pair("attributes", conversation.attributes.toString()),
                                     )
                                 )
                             } else {

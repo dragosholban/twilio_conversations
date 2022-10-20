@@ -40,6 +40,7 @@ class TwilioConversations {
       friendlyName: data?['friendlyName'],
       lastMessageDate: data?['lastMessageDate'],
       lastMessageIndex: data?['lastMessageIndex'],
+      attributes: data?['attributes'],
     );
 
     return conversation;

@@ -79,7 +79,20 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
             
             client?.conversation(withSidOrUniqueName: sid) {(r, conversation) in
                 if (r.isSuccessful) {
-                    result(["sid": conversation?.sid, "friendlyName": conversation?.friendlyName, "lastMessageDate": conversation?.lastMessageDate?.ISO8601Format(), "lastMessageIndex": conversation?.lastMessageIndex])
+                    var jsonData: Data? = nil
+                    do {
+                        jsonData = try JSONSerialization.data(withJSONObject: conversation?.attributes()?.dictionary, options: .prettyPrinted)
+                    } catch let error as NSError {
+                        print(error)
+                    }
+                    
+                    result(["sid": conversation?.sid,
+                            "friendlyName": conversation?.friendlyName,
+                            "lastMessageDate": conversation?.lastMessageDate?.ISO8601Format(),
+                            "lastMessageIndex": conversation?.lastMessageIndex,
+                            "attributes": jsonData != nil ? String(data: jsonData!,
+                                                                   encoding: String.Encoding.ascii) : nil
+                           ])
                 } else {
                     result(nil)
                 }

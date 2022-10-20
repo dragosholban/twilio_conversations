@@ -24,6 +24,7 @@ mixin _$Conversation {
   String? get friendlyName => throw _privateConstructorUsedError;
   String? get lastMessageDate => throw _privateConstructorUsedError;
   int? get lastMessageIndex => throw _privateConstructorUsedError;
+  String? get attributes => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -40,7 +41,8 @@ abstract class $ConversationCopyWith<$Res> {
       {String sid,
       String? friendlyName,
       String? lastMessageDate,
-      int? lastMessageIndex});
+      int? lastMessageIndex,
+      String? attributes});
 }
 
 /// @nodoc
@@ -57,6 +59,7 @@ class _$ConversationCopyWithImpl<$Res> implements $ConversationCopyWith<$Res> {
     Object? friendlyName = freezed,
     Object? lastMessageDate = freezed,
     Object? lastMessageIndex = freezed,
+    Object? attributes = freezed,
   }) {
     return _then(_value.copyWith(
       sid: sid == freezed
@@ -75,6 +78,10 @@ class _$ConversationCopyWithImpl<$Res> implements $ConversationCopyWith<$Res> {
           ? _value.lastMessageIndex
           : lastMessageIndex // ignore: cast_nullable_to_non_nullable
               as int?,
+      attributes: attributes == freezed
+          ? _value.attributes
+          : attributes // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -90,7 +97,8 @@ abstract class _$$_ConversationCopyWith<$Res>
       {String sid,
       String? friendlyName,
       String? lastMessageDate,
-      int? lastMessageIndex});
+      int? lastMessageIndex,
+      String? attributes});
 }
 
 /// @nodoc
@@ -110,6 +118,7 @@ class __$$_ConversationCopyWithImpl<$Res>
     Object? friendlyName = freezed,
     Object? lastMessageDate = freezed,
     Object? lastMessageIndex = freezed,
+    Object? attributes = freezed,
   }) {
     return _then(_$_Conversation(
       sid: sid == freezed
@@ -128,6 +137,10 @@ class __$$_ConversationCopyWithImpl<$Res>
           ? _value.lastMessageIndex
           : lastMessageIndex // ignore: cast_nullable_to_non_nullable
               as int?,
+      attributes: attributes == freezed
+          ? _value.attributes
+          : attributes // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -139,7 +152,8 @@ class _$_Conversation extends _Conversation {
       {required this.sid,
       this.friendlyName,
       this.lastMessageDate,
-      this.lastMessageIndex})
+      this.lastMessageIndex,
+      this.attributes})
       : super._();
 
   factory _$_Conversation.fromJson(Map<String, dynamic> json) =>
@@ -153,10 +167,12 @@ class _$_Conversation extends _Conversation {
   final String? lastMessageDate;
   @override
   final int? lastMessageIndex;
+  @override
+  final String? attributes;
 
   @override
   String toString() {
-    return 'Conversation(sid: $sid, friendlyName: $friendlyName, lastMessageDate: $lastMessageDate, lastMessageIndex: $lastMessageIndex)';
+    return 'Conversation(sid: $sid, friendlyName: $friendlyName, lastMessageDate: $lastMessageDate, lastMessageIndex: $lastMessageIndex, attributes: $attributes)';
   }
 
   @override
@@ -170,7 +186,9 @@ class _$_Conversation extends _Conversation {
             const DeepCollectionEquality()
                 .equals(other.lastMessageDate, lastMessageDate) &&
             const DeepCollectionEquality()
-                .equals(other.lastMessageIndex, lastMessageIndex));
+                .equals(other.lastMessageIndex, lastMessageIndex) &&
+            const DeepCollectionEquality()
+                .equals(other.attributes, attributes));
   }
 
   @JsonKey(ignore: true)
@@ -180,7 +198,8 @@ class _$_Conversation extends _Conversation {
       const DeepCollectionEquality().hash(sid),
       const DeepCollectionEquality().hash(friendlyName),
       const DeepCollectionEquality().hash(lastMessageDate),
-      const DeepCollectionEquality().hash(lastMessageIndex));
+      const DeepCollectionEquality().hash(lastMessageIndex),
+      const DeepCollectionEquality().hash(attributes));
 
   @JsonKey(ignore: true)
   @override
@@ -200,7 +219,8 @@ abstract class _Conversation extends Conversation {
       {required final String sid,
       final String? friendlyName,
       final String? lastMessageDate,
-      final int? lastMessageIndex}) = _$_Conversation;
+      final int? lastMessageIndex,
+      final String? attributes}) = _$_Conversation;
   const _Conversation._() : super._();
 
   factory _Conversation.fromJson(Map<String, dynamic> json) =
@@ -214,6 +234,8 @@ abstract class _Conversation extends Conversation {
   String? get lastMessageDate;
   @override
   int? get lastMessageIndex;
+  @override
+  String? get attributes;
   @override
   @JsonKey(ignore: true)
   _$$_ConversationCopyWith<_$_Conversation> get copyWith =>
