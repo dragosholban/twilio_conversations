@@ -180,7 +180,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                                     "messageBody" to it.body,
                                                     "messageIndex" to it.messageIndex,
                                                     "date" to it.dateCreated,
-                                                    "participantIdentity" to it.participant.identity,
+                                                    "participantIdentity" to it.participant?.identity,
                                                     "hasMedia" to it.attachedMedia.isNotEmpty(),
                                                     "attachedMedia" to returnMedia,
                                                 )
@@ -305,7 +305,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                             "messageBody" to it.body,
                                             "messageIndex" to it.messageIndex,
                                             "date" to it.dateCreated,
-                                            "participantIdentity" to it.participant.identity,
+                                            "participantIdentity" to it.participant?.identity,
                                             "hasMedia" to it.attachedMedia.isNotEmpty(),
                                             "attachedMedia" to returnMedia,
                                         )
