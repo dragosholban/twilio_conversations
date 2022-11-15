@@ -68,10 +68,20 @@ class TwilioConversations {
     return messages;
   }
 
-  Future sendMessage(
-      String sid, String? body, String? path, String? mimeType) async {
-    return await TwilioConversationsPlatform.instance
-        .sendMessage(sid, body, path, mimeType);
+  Future sendMessage({
+    required String conversationSid,
+    String? body,
+    String? path,
+    String? mimeType,
+    Map<String, dynamic>? attributes,
+  }) async {
+    return await TwilioConversationsPlatform.instance.sendMessage(
+      conversationSid: conversationSid,
+      body: body,
+      path: path,
+      mimeType: mimeType,
+      attributes: attributes,
+    );
   }
 
   Stream<Map> getTwilioConversationsStream() {

@@ -17,6 +17,7 @@ class Message with _$Message {
     int? index,
     @Default(false) bool hasMedia,
     @Default([]) List<String> mediaSids,
+    String? attributes,
   }) = _Message;
 
   factory Message.fromJson(Map<String, dynamic> json) =>
@@ -36,6 +37,7 @@ class Message with _$Message {
       participantIdentity: map['participantIdentity'],
       hasMedia: map['hasMedia'] ?? false,
       mediaSids: mediaSids,
+      attributes: map['attributes'],
     );
 
     return message;

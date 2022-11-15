@@ -20,6 +20,7 @@ _$_Message _$$_MessageFromJson(Map<String, dynamic> json) => _$_Message(
               ?.map((e) => e as String)
               .toList() ??
           const [],
+      attributes: json['attributes'] as String?,
     );
 
 Map<String, dynamic> _$$_MessageToJson(_$_Message instance) =>
@@ -32,4 +33,5 @@ Map<String, dynamic> _$$_MessageToJson(_$_Message instance) =>
       'index': instance.index,
       'hasMedia': instance.hasMedia,
       'mediaSids': instance.mediaSids,
+      'attributes': instance.attributes,
     };

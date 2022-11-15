@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.*
@@ -183,6 +184,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                                     "participantIdentity" to it.participant?.identity,
                                                     "hasMedia" to it.attachedMedia.isNotEmpty(),
                                                     "attachedMedia" to returnMedia,
+                                                    "attributes" to it.attributes.toString(),
                                                 )
                                             )
                                         })
@@ -308,6 +310,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                             "participantIdentity" to it.participant?.identity,
                                             "hasMedia" to it.attachedMedia.isNotEmpty(),
                                             "attachedMedia" to returnMedia,
+                                            "attributes" to it.attributes.toString(),
                                         )
                                     )
                                 }
@@ -341,11 +344,12 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                 }
             }
             "sendMessage" -> {
-                val sid = call.argument<String>("sid") ?: ""
+                val sid = call.argument<String>("conversationSid") ?: ""
                 val text = call.argument<String?>("text")
                 val path = call.argument<String?>("path")
                 val mimeType = call.argument<String>("mimeType") ?: ""
                 val fileName = call.argument<String>("fileName") ?: ""
+                val attributes = call.argument<Map<String, Any>>("attributes")
 
                 mainScope.launch {
                     withContext(Dispatchers.IO) {
@@ -354,6 +358,9 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                             val messageBuilder = conversation?.prepareMessage()
                             if (text != null) {
                                 messageBuilder?.setBody(text)
+                            }
+                            if (attributes != null) {
+                                messageBuilder?.setAttributes(Attributes(JSONObject(attributes)))
                             }
                             if (path != null) {
                                 val inputStream = FileInputStream(path)

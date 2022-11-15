@@ -80,10 +80,12 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
             client?.conversation(withSidOrUniqueName: sid) {(r, conversation) in
                 if (r.isSuccessful) {
                     var jsonData: Data? = nil
-                    do {
-                        jsonData = try JSONSerialization.data(withJSONObject: conversation?.attributes()?.dictionary, options: .prettyPrinted)
-                    } catch let error as NSError {
-                        print(error)
+                    if (conversation?.attributes()?.isDictionary ?? false) {
+                        do {
+                            jsonData = try JSONSerialization.data(withJSONObject: conversation?.attributes()?.dictionary, options: .prettyPrinted)
+                        } catch let error as NSError {
+                            print(error)
+                        }
                     }
                     
                     result(["sid": conversation?.sid,
@@ -115,6 +117,15 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                                     ])
                                 }
                                 
+                                var jsonData: Data? = nil
+                                if (message?.attributes()?.isDictionary ?? false) {
+                                    do {
+                                        jsonData = try JSONSerialization.data(withJSONObject: message?.attributes()?.dictionary, options: .prettyPrinted)
+                                    } catch let error as NSError {
+                                        print(error)
+                                    }
+                                }
+                                
                                 result([
                                     "messageSid": message?.sid,
                                     "messageBody": message?.body,
@@ -123,6 +134,8 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                                     "date": message?.dateCreated,
                                     "hasMedia": message?.attachedMedia.count ?? 0 > 0,
                                     "attachedMedia": returnMedia,
+                                    "attributes": jsonData != nil ? String(data: jsonData!,
+                                                                           encoding: String.Encoding.ascii) : nil
                                 ])
                             } else {
                                 result(nil)
@@ -230,6 +243,15 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                                     ])
                                 }
                                 
+                                var jsonData: Data? = nil
+                                if (message.attributes()?.isDictionary ?? false) {
+                                    do {
+                                        jsonData = try JSONSerialization.data(withJSONObject: message.attributes()?.dictionary, options: .prettyPrinted)
+                                    } catch let error as NSError {
+                                        print(error)
+                                    }
+                                }
+                                
                                 returnMessages.append([
                                     "messageSid": message.sid,
                                     "messageBody": message.body,
@@ -238,6 +260,8 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                                     "date": message.dateCreated,
                                     "hasMedia": message.attachedMedia.count > 0,
                                     "attachedMedia": returnMedia,
+                                    "attributes": jsonData != nil ? String(data: jsonData!,
+                                                                           encoding: String.Encoding.ascii) : nil
                                 ])
                             }
                             result(returnMessages)
@@ -251,17 +275,21 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
             }
         case "sendMessage":
             let arguments = call.arguments as! [String: Any]
-            let sid = arguments["sid"] as! String
+            let sid = arguments["conversationSid"] as! String
             let text = arguments["text"] as? String
             let path = arguments["path"] as? String
             let mimeType = arguments["mimeType"] as? String ?? ""
             let fileName = arguments["fileName"] as? String ?? ""
+            let attributes = arguments["attributes"] as? [String: Any]
             
             client?.conversation(withSidOrUniqueName: sid) {(r, conversation) in
                 if (r.isSuccessful) {
                     let messageBuilder = conversation?.prepareMessage()
                     if (text != nil) {
                         messageBuilder?.setBody(text!)
+                    }
+                    if (attributes != nil) {
+                        messageBuilder?.setAttributes(TCHJsonAttributes(dictionary: attributes!), error: nil)
                     }
                     if (path != nil) {
                         if let inputStream = InputStream(fileAtPath: path!) {

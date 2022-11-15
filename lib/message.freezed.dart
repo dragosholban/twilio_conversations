@@ -28,6 +28,7 @@ mixin _$Message {
   int? get index => throw _privateConstructorUsedError;
   bool get hasMedia => throw _privateConstructorUsedError;
   List<String> get mediaSids => throw _privateConstructorUsedError;
+  String? get attributes => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -46,7 +47,8 @@ abstract class $MessageCopyWith<$Res> {
       DateTime? dateCreated,
       int? index,
       bool hasMedia,
-      List<String> mediaSids});
+      List<String> mediaSids,
+      String? attributes});
 }
 
 /// @nodoc
@@ -67,6 +69,7 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
     Object? index = freezed,
     Object? hasMedia = freezed,
     Object? mediaSids = freezed,
+    Object? attributes = freezed,
   }) {
     return _then(_value.copyWith(
       sid: sid == freezed
@@ -101,6 +104,10 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
           ? _value.mediaSids
           : mediaSids // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      attributes: attributes == freezed
+          ? _value.attributes
+          : attributes // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -119,7 +126,8 @@ abstract class _$$_MessageCopyWith<$Res> implements $MessageCopyWith<$Res> {
       DateTime? dateCreated,
       int? index,
       bool hasMedia,
-      List<String> mediaSids});
+      List<String> mediaSids,
+      String? attributes});
 }
 
 /// @nodoc
@@ -141,6 +149,7 @@ class __$$_MessageCopyWithImpl<$Res> extends _$MessageCopyWithImpl<$Res>
     Object? index = freezed,
     Object? hasMedia = freezed,
     Object? mediaSids = freezed,
+    Object? attributes = freezed,
   }) {
     return _then(_$_Message(
       sid: sid == freezed
@@ -175,6 +184,10 @@ class __$$_MessageCopyWithImpl<$Res> extends _$MessageCopyWithImpl<$Res>
           ? _value._mediaSids
           : mediaSids // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      attributes: attributes == freezed
+          ? _value.attributes
+          : attributes // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -190,7 +203,8 @@ class _$_Message extends _Message {
       this.dateCreated,
       this.index,
       this.hasMedia = false,
-      final List<String> mediaSids = const []})
+      final List<String> mediaSids = const [],
+      this.attributes})
       : _mediaSids = mediaSids,
         super._();
 
@@ -221,8 +235,11 @@ class _$_Message extends _Message {
   }
 
   @override
+  final String? attributes;
+
+  @override
   String toString() {
-    return 'Message(sid: $sid, body: $body, lastMessageDate: $lastMessageDate, participantIdentity: $participantIdentity, dateCreated: $dateCreated, index: $index, hasMedia: $hasMedia, mediaSids: $mediaSids)';
+    return 'Message(sid: $sid, body: $body, lastMessageDate: $lastMessageDate, participantIdentity: $participantIdentity, dateCreated: $dateCreated, index: $index, hasMedia: $hasMedia, mediaSids: $mediaSids, attributes: $attributes)';
   }
 
   @override
@@ -241,7 +258,9 @@ class _$_Message extends _Message {
             const DeepCollectionEquality().equals(other.index, index) &&
             const DeepCollectionEquality().equals(other.hasMedia, hasMedia) &&
             const DeepCollectionEquality()
-                .equals(other._mediaSids, _mediaSids));
+                .equals(other._mediaSids, _mediaSids) &&
+            const DeepCollectionEquality()
+                .equals(other.attributes, attributes));
   }
 
   @JsonKey(ignore: true)
@@ -255,7 +274,8 @@ class _$_Message extends _Message {
       const DeepCollectionEquality().hash(dateCreated),
       const DeepCollectionEquality().hash(index),
       const DeepCollectionEquality().hash(hasMedia),
-      const DeepCollectionEquality().hash(_mediaSids));
+      const DeepCollectionEquality().hash(_mediaSids),
+      const DeepCollectionEquality().hash(attributes));
 
   @JsonKey(ignore: true)
   @override
@@ -279,7 +299,8 @@ abstract class _Message extends Message {
       final DateTime? dateCreated,
       final int? index,
       final bool hasMedia,
-      final List<String> mediaSids}) = _$_Message;
+      final List<String> mediaSids,
+      final String? attributes}) = _$_Message;
   const _Message._() : super._();
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$_Message.fromJson;
@@ -300,6 +321,8 @@ abstract class _Message extends Message {
   bool get hasMedia;
   @override
   List<String> get mediaSids;
+  @override
+  String? get attributes;
   @override
   @JsonKey(ignore: true)
   _$$_MessageCopyWith<_$_Message> get copyWith =>
