@@ -16,8 +16,8 @@ _$_Message _$$_MessageFromJson(Map<String, dynamic> json) => _$_Message(
           : DateTime.parse(json['dateCreated'] as String),
       index: json['index'] as int?,
       hasMedia: json['hasMedia'] as bool? ?? false,
-      mediaSids: (json['mediaSids'] as List<dynamic>?)
-              ?.map((e) => e as String)
+      medias: (json['medias'] as List<dynamic>?)
+              ?.map((e) => Map<String, String>.from(e as Map))
               .toList() ??
           const [],
       attributes: json['attributes'] as String?,
@@ -32,6 +32,6 @@ Map<String, dynamic> _$$_MessageToJson(_$_Message instance) =>
       'dateCreated': instance.dateCreated?.toIso8601String(),
       'index': instance.index,
       'hasMedia': instance.hasMedia,
-      'mediaSids': instance.mediaSids,
+      'medias': instance.medias,
       'attributes': instance.attributes,
     };

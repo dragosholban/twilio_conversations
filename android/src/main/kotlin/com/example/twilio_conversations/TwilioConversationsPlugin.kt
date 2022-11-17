@@ -171,6 +171,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                                 returnMedia.add(
                                                     hashMapOf<String, Any?>(
                                                         "mediaSid" to media.sid,
+                                                        "mediaContentType" to media.contentType,
                                                     )
                                                 )
                                             }
@@ -297,6 +298,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                         returnMedia.add(
                                             hashMapOf<String, Any?>(
                                                 "mediaSid" to media.sid,
+                                                "mediaContentType" to media.contentType,
                                             )
                                         )
                                     }

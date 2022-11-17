@@ -16,7 +16,7 @@ class Message with _$Message {
     DateTime? dateCreated,
     int? index,
     @Default(false) bool hasMedia,
-    @Default([]) List<String> mediaSids,
+    @Default([]) List<Map<String, String>> medias,
     String? attributes,
   }) = _Message;
 
@@ -24,9 +24,12 @@ class Message with _$Message {
       _$MessageFromJson(json);
 
   factory Message.fromMap(Map map) {
-    final List<String> mediaSids = [];
+    final List<Map<String, String>> medias = [];
     for (final media in map['attachedMedia'] ?? []) {
-      mediaSids.add(media['mediaSid']);
+      medias.add({
+        'sid': media['mediaSid'],
+        'contentType': media['mediaContentType'],
+      });
     }
 
     final message = Message(
@@ -36,7 +39,7 @@ class Message with _$Message {
       index: map['messageIndex'],
       participantIdentity: map['participantIdentity'],
       hasMedia: map['hasMedia'] ?? false,
-      mediaSids: mediaSids,
+      medias: medias,
       attributes: map['attributes'],
     );
 

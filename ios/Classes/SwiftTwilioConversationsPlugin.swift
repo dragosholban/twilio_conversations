@@ -114,6 +114,7 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                                 for media in message?.attachedMedia ?? [] {
                                     returnMedia.append([
                                         "mediaSid": media.sid,
+                                        "mediaContentType": media.contentType,
                                     ])
                                 }
                                 
@@ -240,6 +241,7 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                                 for media in message.attachedMedia {
                                     returnMedia.append([
                                         "mediaSid": media.sid,
+                                        "mediaContentType": media.contentType,
                                     ])
                                 }
                                 
