@@ -12,6 +12,7 @@ _$_Conversation _$$_ConversationFromJson(Map<String, dynamic> json) =>
       friendlyName: json['friendlyName'] as String?,
       lastMessageDate: json['lastMessageDate'] as String?,
       lastMessageIndex: json['lastMessageIndex'] as int?,
+      lastReadMessageIndex: json['lastReadMessageIndex'] as int?,
       attributes: json['attributes'] as String?,
     );
 
@@ -21,5 +22,6 @@ Map<String, dynamic> _$$_ConversationToJson(_$_Conversation instance) =>
       'friendlyName': instance.friendlyName,
       'lastMessageDate': instance.lastMessageDate,
       'lastMessageIndex': instance.lastMessageIndex,
+      'lastReadMessageIndex': instance.lastReadMessageIndex,
       'attributes': instance.attributes,
     };

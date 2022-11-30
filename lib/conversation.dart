@@ -14,6 +14,7 @@ class Conversation with _$Conversation {
     String? friendlyName,
     String? lastMessageDate,
     int? lastMessageIndex,
+    int? lastReadMessageIndex,
     String? attributes,
   }) = _Conversation;
 

@@ -88,12 +88,22 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                         }
                     }
                     
+                    var lastReadMessageIndex: NSNumber? = nil
+                    if (conversation?.synchronizationStatus == TCHConversationSynchronizationStatus.all) {
+                        conversation?.participants().forEach() { (participant) in
+                            if (participant.identity != self.client?.user?.identity) {
+                                lastReadMessageIndex = participant.lastReadMessageIndex
+                            }
+                        }
+                    }
+                    
                     result(["sid": conversation?.sid,
                             "friendlyName": conversation?.friendlyName,
                             "lastMessageDate": conversation?.lastMessageDate?.ISO8601Format(),
                             "lastMessageIndex": conversation?.lastMessageIndex,
                             "attributes": jsonData != nil ? String(data: jsonData!,
-                                                                   encoding: String.Encoding.ascii) : nil
+                                                                   encoding: String.Encoding.ascii) : nil,
+                            "lastReadMessageIndex": lastReadMessageIndex,
                            ])
                 } else {
                     result(nil)

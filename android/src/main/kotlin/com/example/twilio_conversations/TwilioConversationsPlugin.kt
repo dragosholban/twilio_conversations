@@ -128,6 +128,14 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                         try {
                             val conversation = conversationsClient?.getConversation(sid)
                             if (conversation != null) {
+                                var lastReadMessageIndex: Long? = null
+                                if (conversation.synchronizationStatus == Conversation.SynchronizationStatus.ALL) {
+                                    conversation.participantsList?.forEach { participant ->
+                                        if (participant.identity != conversationsClient?.myIdentity) {
+                                            lastReadMessageIndex = participant.lastReadMessageIndex
+                                        }
+                                    }
+                                }
                                 result.success(
                                     hashMapOf(
                                         Pair("sid", conversation.sid),
@@ -138,14 +146,15 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                         ),
                                         Pair("lastMessageIndex", conversation.lastMessageIndex),
                                         Pair("attributes", conversation.attributes.toString()),
+                                        Pair("lastReadMessageIndex", lastReadMessageIndex),
                                     )
                                 )
                             } else {
-                                result.success(hashMapOf<String, String?>());
+                                result.success(hashMapOf<String, String?>())
                             }
                         } catch (e: Exception) {
                             Log.d(TAG, "getConversation: ${e.message}")
-                            result.error("getConversation", e.message, "");
+                            result.error("getConversation", e.message, "")
                         }
                     }
                 }

@@ -24,6 +24,7 @@ mixin _$Conversation {
   String? get friendlyName => throw _privateConstructorUsedError;
   String? get lastMessageDate => throw _privateConstructorUsedError;
   int? get lastMessageIndex => throw _privateConstructorUsedError;
+  int? get lastReadMessageIndex => throw _privateConstructorUsedError;
   String? get attributes => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,6 +43,7 @@ abstract class $ConversationCopyWith<$Res> {
       String? friendlyName,
       String? lastMessageDate,
       int? lastMessageIndex,
+      int? lastReadMessageIndex,
       String? attributes});
 }
 
@@ -59,6 +61,7 @@ class _$ConversationCopyWithImpl<$Res> implements $ConversationCopyWith<$Res> {
     Object? friendlyName = freezed,
     Object? lastMessageDate = freezed,
     Object? lastMessageIndex = freezed,
+    Object? lastReadMessageIndex = freezed,
     Object? attributes = freezed,
   }) {
     return _then(_value.copyWith(
@@ -77,6 +80,10 @@ class _$ConversationCopyWithImpl<$Res> implements $ConversationCopyWith<$Res> {
       lastMessageIndex: lastMessageIndex == freezed
           ? _value.lastMessageIndex
           : lastMessageIndex // ignore: cast_nullable_to_non_nullable
+              as int?,
+      lastReadMessageIndex: lastReadMessageIndex == freezed
+          ? _value.lastReadMessageIndex
+          : lastReadMessageIndex // ignore: cast_nullable_to_non_nullable
               as int?,
       attributes: attributes == freezed
           ? _value.attributes
@@ -98,6 +105,7 @@ abstract class _$$_ConversationCopyWith<$Res>
       String? friendlyName,
       String? lastMessageDate,
       int? lastMessageIndex,
+      int? lastReadMessageIndex,
       String? attributes});
 }
 
@@ -118,6 +126,7 @@ class __$$_ConversationCopyWithImpl<$Res>
     Object? friendlyName = freezed,
     Object? lastMessageDate = freezed,
     Object? lastMessageIndex = freezed,
+    Object? lastReadMessageIndex = freezed,
     Object? attributes = freezed,
   }) {
     return _then(_$_Conversation(
@@ -137,6 +146,10 @@ class __$$_ConversationCopyWithImpl<$Res>
           ? _value.lastMessageIndex
           : lastMessageIndex // ignore: cast_nullable_to_non_nullable
               as int?,
+      lastReadMessageIndex: lastReadMessageIndex == freezed
+          ? _value.lastReadMessageIndex
+          : lastReadMessageIndex // ignore: cast_nullable_to_non_nullable
+              as int?,
       attributes: attributes == freezed
           ? _value.attributes
           : attributes // ignore: cast_nullable_to_non_nullable
@@ -153,6 +166,7 @@ class _$_Conversation extends _Conversation {
       this.friendlyName,
       this.lastMessageDate,
       this.lastMessageIndex,
+      this.lastReadMessageIndex,
       this.attributes})
       : super._();
 
@@ -168,11 +182,13 @@ class _$_Conversation extends _Conversation {
   @override
   final int? lastMessageIndex;
   @override
+  final int? lastReadMessageIndex;
+  @override
   final String? attributes;
 
   @override
   String toString() {
-    return 'Conversation(sid: $sid, friendlyName: $friendlyName, lastMessageDate: $lastMessageDate, lastMessageIndex: $lastMessageIndex, attributes: $attributes)';
+    return 'Conversation(sid: $sid, friendlyName: $friendlyName, lastMessageDate: $lastMessageDate, lastMessageIndex: $lastMessageIndex, lastReadMessageIndex: $lastReadMessageIndex, attributes: $attributes)';
   }
 
   @override
@@ -188,6 +204,8 @@ class _$_Conversation extends _Conversation {
             const DeepCollectionEquality()
                 .equals(other.lastMessageIndex, lastMessageIndex) &&
             const DeepCollectionEquality()
+                .equals(other.lastReadMessageIndex, lastReadMessageIndex) &&
+            const DeepCollectionEquality()
                 .equals(other.attributes, attributes));
   }
 
@@ -199,6 +217,7 @@ class _$_Conversation extends _Conversation {
       const DeepCollectionEquality().hash(friendlyName),
       const DeepCollectionEquality().hash(lastMessageDate),
       const DeepCollectionEquality().hash(lastMessageIndex),
+      const DeepCollectionEquality().hash(lastReadMessageIndex),
       const DeepCollectionEquality().hash(attributes));
 
   @JsonKey(ignore: true)
@@ -220,6 +239,7 @@ abstract class _Conversation extends Conversation {
       final String? friendlyName,
       final String? lastMessageDate,
       final int? lastMessageIndex,
+      final int? lastReadMessageIndex,
       final String? attributes}) = _$_Conversation;
   const _Conversation._() : super._();
 
@@ -234,6 +254,8 @@ abstract class _Conversation extends Conversation {
   String? get lastMessageDate;
   @override
   int? get lastMessageIndex;
+  @override
+  int? get lastReadMessageIndex;
   @override
   String? get attributes;
   @override
