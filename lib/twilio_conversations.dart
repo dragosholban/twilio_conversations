@@ -1,5 +1,7 @@
 import 'package:twilio_conversations/conversation.dart';
+import 'package:twilio_conversations/conversation_api.dart';
 import 'package:twilio_conversations/message.dart';
+import 'package:twilio_conversations/participant_api.dart';
 
 import 'twilio_conversations_platform_interface.dart';
 
@@ -8,6 +10,9 @@ export 'conversation.dart';
 export 'message.dart';
 
 class TwilioConversations {
+  final conversationApi = ConversationApi();
+  final participantApi = ParticipantApi();
+
   Future<bool?> initClient(String token) {
     return TwilioConversationsPlatform.instance.initClient(token);
   }

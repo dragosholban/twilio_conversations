@@ -134,4 +134,22 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
       'token': token,
     });
   }
+
+  @override
+  Future<List?> getConversationParticipantsList(String sid) async {
+    return methodChannel.invokeListMethod('conversation.getParticipantsList', {
+      'sid': sid,
+    });
+  }
+
+  @override
+  Future<Map?> getConversationParticipantUser(
+      String conversationSid, String participantSid) async {
+    final result = await methodChannel.invokeMapMethod('participant.getUser', {
+      'conversationSid': conversationSid,
+      'participantSid': participantSid,
+    });
+
+    return result;
+  }
 }

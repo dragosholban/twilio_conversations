@@ -97,4 +97,14 @@ abstract class TwilioConversationsPlatform extends PlatformInterface {
   Future registerAPNToken(String token) {
     throw UnimplementedError('registerAPNToken() has not been implemented.');
   }
+
+  Future<List?> getConversationParticipantsList(String sid) {
+    throw UnimplementedError(
+        'getConversationParticipantsList() has not been implemented.');
+  }
+
+  Future<Map?> getConversationParticipantUser(
+      String conversationSid, String participantSid) {
+    throw UnimplementedError('getUser() has not been implemented.');
+  }
 }

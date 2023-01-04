@@ -419,6 +419,66 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     result.error("registerFCMToken", e.message, "");
                 }
             }
+            "conversation.getParticipantsList" -> {
+                val sid = call.argument<String>("sid") ?: ""
+
+                mainScope.launch {
+                    withContext(Dispatchers.IO) {
+                        try {
+                            val conversation = conversationsClient?.getConversation(sid)
+                            val participants =
+                                emptyList<HashMap<String, Any?>>().toMutableList()
+                            conversation?.participantsList?.forEach {
+                                participants.add(
+                                    hashMapOf<String, Any?>(
+                                        "sid" to it.sid,
+                                        "conversationSid" to it.conversation.sid,
+                                        "identity" to it.identity,
+                                        "attributes" to it.attributes.toString(),
+                                    )
+                                )
+                            }
+                            result.success(participants)
+                        } catch (e: Exception) {
+                            Log.d(TAG, "conversation.getParticipantsList: ${e.message}")
+                            result.error("conversation.getParticipantsList", e.message, "");
+                        }
+                    }
+                }
+            }
+            "participant.getUser" -> {
+                val conversationSid = call.argument<String>("conversationSid") ?: ""
+                val participantSid = call.argument<String>("participantSid")
+
+                mainScope.launch {
+                    withContext(Dispatchers.IO) {
+                        try {
+                            val conversation = conversationsClient?.getConversation(conversationSid)
+                            participantSid?.let { participantSid ->
+                                if (conversation?.synchronizationStatus == Conversation.SynchronizationStatus.ALL) {
+                                    val participant =
+                                        conversation.getParticipantBySid(participantSid)
+
+                                    participant.getAndSubscribeUser {
+                                        result.success(
+                                            hashMapOf<String, Any?>(
+                                                "identity" to it.identity,
+                                                "friendlyName" to it.friendlyName,
+                                                "attributes" to it.attributes.toString(),
+                                            )
+                                        )
+                                    }
+                                } else {
+                                    result.success(null)
+                                }
+                            }
+                        } catch (e: Exception) {
+                            Log.d(TAG, "participant.getUser: ${e.message}")
+                            result.error("participant.getUser", e.message, "");
+                        }
+                    }
+                }
+            }
             else -> {
                 result.notImplemented()
             }
