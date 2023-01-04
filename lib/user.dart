@@ -13,6 +13,7 @@ class User with _$User {
     String? identity,
     String? friendlyName,
     String? attributes,
+    bool? isOnline,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

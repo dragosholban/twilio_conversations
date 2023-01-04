@@ -360,6 +360,71 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
             } else {
                 result(false);
             }
+        case "conversation.getParticipantsList":
+            let arguments = call.arguments as! [String: Any]
+            let sid = arguments["sid"] as! String
+            
+            client?.conversation(withSidOrUniqueName: sid) {(r, conversation) in
+                if (r.isSuccessful) {
+                    var participants: [[String: Any?]] = []
+                    
+                    for participant in conversation?.participants() ?? [] {
+                        var jsonData: Data? = nil
+                        if (participant.attributes()?.isDictionary ?? false) {
+                            do {
+                                jsonData = try JSONSerialization.data(withJSONObject: participant.attributes()?.dictionary, options: .prettyPrinted)
+                            } catch let error as NSError {
+                                print(error)
+                            }
+                        }
+                        
+                        participants.append([
+                            "sid": participant.sid,
+                            "conversationSid": participant.conversation?.sid,
+                            "identity": participant.identity,
+                            "attributes": jsonData != nil ? String(data: jsonData!,
+                                                                   encoding: String.Encoding.ascii) : nil
+                        ])
+                    }
+                    result(participants)
+                } else {
+                    result(nil)
+                }
+            }
+            
+        case "participant.getUser":
+            let arguments = call.arguments as! [String: Any]
+            let conversationSid = arguments["conversationSid"] as! String
+            let participantSid = arguments["participantSid"] as! String
+            
+            client?.conversation(withSidOrUniqueName: conversationSid) {(r, conversation) in
+                if (r.isSuccessful) {
+                    conversation?.participant(withSid: participantSid)?.subscribedUser() { (r, user) in
+                        if (r.isSuccessful) {
+                            var jsonData: Data? = nil
+                            if (user?.attributes()?.isDictionary ?? false) {
+                                do {
+                                    jsonData = try JSONSerialization.data(withJSONObject: user?.attributes()?.dictionary, options: .prettyPrinted)
+                                } catch let error as NSError {
+                                    print(error)
+                                }
+                            }
+                            
+                            result([
+                                "identity": user?.identity,
+                                "friendlyName": user?.friendlyName,
+                                "isOnline": user?.isOnline(),
+                                "attributes": jsonData != nil ? String(data: jsonData!,
+                                                                       encoding: String.Encoding.ascii) : nil
+                            ])
+                        } else {
+                            result(nil)
+                        }
+                    }
+                } else {
+                    result(nil)
+                }
+            }
             
         default:
             result(FlutterMethodNotImplemented)

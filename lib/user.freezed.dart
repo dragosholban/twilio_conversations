@@ -23,6 +23,7 @@ mixin _$User {
   String? get identity => throw _privateConstructorUsedError;
   String? get friendlyName => throw _privateConstructorUsedError;
   String? get attributes => throw _privateConstructorUsedError;
+  bool? get isOnline => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -33,7 +34,11 @@ mixin _$User {
 abstract class $UserCopyWith<$Res> {
   factory $UserCopyWith(User value, $Res Function(User) then) =
       _$UserCopyWithImpl<$Res>;
-  $Res call({String? identity, String? friendlyName, String? attributes});
+  $Res call(
+      {String? identity,
+      String? friendlyName,
+      String? attributes,
+      bool? isOnline});
 }
 
 /// @nodoc
@@ -49,6 +54,7 @@ class _$UserCopyWithImpl<$Res> implements $UserCopyWith<$Res> {
     Object? identity = freezed,
     Object? friendlyName = freezed,
     Object? attributes = freezed,
+    Object? isOnline = freezed,
   }) {
     return _then(_value.copyWith(
       identity: identity == freezed
@@ -63,6 +69,10 @@ class _$UserCopyWithImpl<$Res> implements $UserCopyWith<$Res> {
           ? _value.attributes
           : attributes // ignore: cast_nullable_to_non_nullable
               as String?,
+      isOnline: isOnline == freezed
+          ? _value.isOnline
+          : isOnline // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -72,7 +82,11 @@ abstract class _$$_UserCopyWith<$Res> implements $UserCopyWith<$Res> {
   factory _$$_UserCopyWith(_$_User value, $Res Function(_$_User) then) =
       __$$_UserCopyWithImpl<$Res>;
   @override
-  $Res call({String? identity, String? friendlyName, String? attributes});
+  $Res call(
+      {String? identity,
+      String? friendlyName,
+      String? attributes,
+      bool? isOnline});
 }
 
 /// @nodoc
@@ -89,6 +103,7 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res>
     Object? identity = freezed,
     Object? friendlyName = freezed,
     Object? attributes = freezed,
+    Object? isOnline = freezed,
   }) {
     return _then(_$_User(
       identity: identity == freezed
@@ -103,6 +118,10 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res>
           ? _value.attributes
           : attributes // ignore: cast_nullable_to_non_nullable
               as String?,
+      isOnline: isOnline == freezed
+          ? _value.isOnline
+          : isOnline // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -110,7 +129,8 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$_User extends _User {
-  const _$_User({this.identity, this.friendlyName, this.attributes})
+  const _$_User(
+      {this.identity, this.friendlyName, this.attributes, this.isOnline})
       : super._();
 
   factory _$_User.fromJson(Map<String, dynamic> json) => _$$_UserFromJson(json);
@@ -121,10 +141,12 @@ class _$_User extends _User {
   final String? friendlyName;
   @override
   final String? attributes;
+  @override
+  final bool? isOnline;
 
   @override
   String toString() {
-    return 'User(identity: $identity, friendlyName: $friendlyName, attributes: $attributes)';
+    return 'User(identity: $identity, friendlyName: $friendlyName, attributes: $attributes, isOnline: $isOnline)';
   }
 
   @override
@@ -136,7 +158,8 @@ class _$_User extends _User {
             const DeepCollectionEquality()
                 .equals(other.friendlyName, friendlyName) &&
             const DeepCollectionEquality()
-                .equals(other.attributes, attributes));
+                .equals(other.attributes, attributes) &&
+            const DeepCollectionEquality().equals(other.isOnline, isOnline));
   }
 
   @JsonKey(ignore: true)
@@ -145,7 +168,8 @@ class _$_User extends _User {
       runtimeType,
       const DeepCollectionEquality().hash(identity),
       const DeepCollectionEquality().hash(friendlyName),
-      const DeepCollectionEquality().hash(attributes));
+      const DeepCollectionEquality().hash(attributes),
+      const DeepCollectionEquality().hash(isOnline));
 
   @JsonKey(ignore: true)
   @override
@@ -164,7 +188,8 @@ abstract class _User extends User {
   const factory _User(
       {final String? identity,
       final String? friendlyName,
-      final String? attributes}) = _$_User;
+      final String? attributes,
+      final bool? isOnline}) = _$_User;
   const _User._() : super._();
 
   factory _User.fromJson(Map<String, dynamic> json) = _$_User.fromJson;
@@ -175,6 +200,8 @@ abstract class _User extends User {
   String? get friendlyName;
   @override
   String? get attributes;
+  @override
+  bool? get isOnline;
   @override
   @JsonKey(ignore: true)
   _$$_UserCopyWith<_$_User> get copyWith => throw _privateConstructorUsedError;

@@ -465,6 +465,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                                 "identity" to it.identity,
                                                 "friendlyName" to it.friendlyName,
                                                 "attributes" to it.attributes.toString(),
+                                                "isOnline" to it.isOnline,
                                             )
                                         )
                                     }
