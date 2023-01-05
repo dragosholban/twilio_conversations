@@ -137,12 +137,24 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                                     }
                                 }
                                 
+                                var participantJsonData: Data? = nil
+                                if (message?.participant?.attributes()?.isDictionary ?? false) {
+                                    do {
+                                        participantJsonData = try JSONSerialization.data(withJSONObject: message?.participant?.attributes()?.dictionary, options: .prettyPrinted)
+                                    } catch let error as NSError {
+                                        print(error)
+                                    }
+                                }
+                                
                                 result([
-                                    "messageSid": message?.sid,
-                                    "messageBody": message?.body,
+                                    "sid": message?.sid,
+                                    "body": message?.body,
                                     "messageIndex": message?.index,
-                                    "participantIdentity": message?.participant?.identity,
-                                    "date": message?.dateCreated,
+                                    "participant.sid": message?.participant?.sid,
+                                    "participant.conversationSid": message?.participant?.conversation?.sid,
+                                    "participant.identity": message?.participant?.identity,
+                                    "participant.attributes": participantJsonData != nil ? String(data: participantJsonData!, encoding: String.Encoding.ascii) : nil,
+                                    "dateCreated": message?.dateCreated,
                                     "hasMedia": message?.attachedMedia.count ?? 0 > 0,
                                     "attachedMedia": returnMedia,
                                     "attributes": jsonData != nil ? String(data: jsonData!,
@@ -264,12 +276,24 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                                     }
                                 }
                                 
+                                var participantJsonData: Data? = nil
+                                if (message.participant?.attributes()?.isDictionary ?? false) {
+                                    do {
+                                        participantJsonData = try JSONSerialization.data(withJSONObject: message.participant?.attributes()?.dictionary, options: .prettyPrinted)
+                                    } catch let error as NSError {
+                                        print(error)
+                                    }
+                                }
+                                
                                 returnMessages.append([
-                                    "messageSid": message.sid,
-                                    "messageBody": message.body,
+                                    "sid": message.sid,
+                                    "body": message.body,
                                     "messageIndex": message.index,
-                                    "participantIdentity": message.participant?.identity,
-                                    "date": message.dateCreated,
+                                    "participant.sid": message.participant?.sid,
+                                    "participant.conversationSid": message.participant?.conversation?.sid,
+                                    "participant.identity": message.participant?.identity,
+                                    "participant.attributes": participantJsonData != nil ? String(data: participantJsonData!, encoding: String.Encoding.ascii) : nil,
+                                    "dateCreated": message.dateCreated,
                                     "hasMedia": message.attachedMedia.count > 0,
                                     "attachedMedia": returnMedia,
                                     "attributes": jsonData != nil ? String(data: jsonData!,

@@ -55,12 +55,7 @@ class Conversation with _$Conversation {
           .getMessageByIndex(sid, lastMessageIndex!);
 
       if (messageData != null) {
-        return Message(
-          sid: messageData['messageSid'],
-          body: messageData['messageBody'],
-          dateCreated: DateTime.parse(messageData['date']),
-          participantIdentity: messageData['participantIdentity'],
-        );
+        return Message.fromMap(messageData);
       }
     }
     return null;

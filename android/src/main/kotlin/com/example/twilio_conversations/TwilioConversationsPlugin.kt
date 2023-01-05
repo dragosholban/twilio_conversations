@@ -187,11 +187,14 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
                                             result.success(
                                                 hashMapOf<String, Any?>(
-                                                    "messageSid" to it.sid,
-                                                    "messageBody" to it.body,
+                                                    "sid" to it.sid,
+                                                    "body" to it.body,
                                                     "messageIndex" to it.messageIndex,
-                                                    "date" to it.dateCreated,
-                                                    "participantIdentity" to it.participant?.identity,
+                                                    "dateCreated" to it.dateCreated,
+                                                    "participant.sid" to it.participant?.sid,
+                                                    "participant.conversationSid" to it.participant?.conversation?.sid,
+                                                    "participant.identity" to it.participant?.identity,
+                                                    "participant.attributes" to it.participant?.attributes.toString(),
                                                     "hasMedia" to it.attachedMedia.isNotEmpty(),
                                                     "attachedMedia" to returnMedia,
                                                     "attributes" to it.attributes.toString(),
@@ -314,11 +317,14 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
                                     returnMessages.add(
                                         hashMapOf<String, Any?>(
-                                            "messageSid" to it.sid,
-                                            "messageBody" to it.body,
+                                            "sid" to it.sid,
+                                            "body" to it.body,
                                             "messageIndex" to it.messageIndex,
-                                            "date" to it.dateCreated,
-                                            "participantIdentity" to it.participant?.identity,
+                                            "dateCreated" to it.dateCreated,
+                                            "participant.sid" to it.participant?.sid,
+                                            "participant.conversationSid" to it.participant?.conversation?.sid,
+                                            "participant.identity" to it.participant?.identity,
+                                            "participant.attributes" to it.participant?.attributes.toString(),
                                             "hasMedia" to it.attachedMedia.isNotEmpty(),
                                             "attachedMedia" to returnMedia,
                                             "attributes" to it.attributes.toString(),

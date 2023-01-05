@@ -10,17 +10,19 @@ _$_Message _$$_MessageFromJson(Map<String, dynamic> json) => _$_Message(
       sid: json['sid'] as String,
       body: json['body'] as String?,
       lastMessageDate: json['lastMessageDate'] as String?,
-      participantIdentity: json['participantIdentity'] as String?,
       dateCreated: json['dateCreated'] == null
           ? null
           : DateTime.parse(json['dateCreated'] as String),
-      index: json['index'] as int?,
+      messageIndex: json['messageIndex'] as int?,
       hasMedia: json['hasMedia'] as bool? ?? false,
       medias: (json['medias'] as List<dynamic>?)
               ?.map((e) => Map<String, String>.from(e as Map))
               .toList() ??
           const [],
       attributes: json['attributes'] as String?,
+      participant: json['participant'] == null
+          ? null
+          : Participant.fromJson(json['participant'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$_MessageToJson(_$_Message instance) =>
@@ -28,10 +30,10 @@ Map<String, dynamic> _$$_MessageToJson(_$_Message instance) =>
       'sid': instance.sid,
       'body': instance.body,
       'lastMessageDate': instance.lastMessageDate,
-      'participantIdentity': instance.participantIdentity,
       'dateCreated': instance.dateCreated?.toIso8601String(),
-      'index': instance.index,
+      'messageIndex': instance.messageIndex,
       'hasMedia': instance.hasMedia,
       'medias': instance.medias,
       'attributes': instance.attributes,
+      'participant': instance.participant,
     };

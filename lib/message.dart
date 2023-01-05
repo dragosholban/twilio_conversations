@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:twilio_conversations/participant.dart';
 import 'package:twilio_conversations/twilio_conversations_platform_interface.dart';
 
 part 'message.freezed.dart';
@@ -12,12 +13,12 @@ class Message with _$Message {
     required String sid,
     String? body,
     String? lastMessageDate,
-    String? participantIdentity,
     DateTime? dateCreated,
-    int? index,
+    int? messageIndex,
     @Default(false) bool hasMedia,
     @Default([]) List<Map<String, String>> medias,
     String? attributes,
+    Participant? participant,
   }) = _Message;
 
   factory Message.fromJson(Map<String, dynamic> json) =>
@@ -32,15 +33,26 @@ class Message with _$Message {
       });
     }
 
+    Participant? participant;
+    if (map['participant.sid'] != null &&
+        map['participant.conversationSid'] != null) {
+      participant = Participant(
+        sid: map['participant.sid'],
+        conversationSid: map['participant.conversationSid'],
+        identity: map['participant.identity'],
+        attributes: map['participant.attributes'],
+      );
+    }
+
     final message = Message(
-      sid: map['messageSid'],
-      body: map['messageBody'],
-      dateCreated: DateTime.parse(map['date']),
-      index: map['messageIndex'],
-      participantIdentity: map['participantIdentity'],
+      sid: map['sid'],
+      body: map['body'],
+      dateCreated: DateTime.parse(map['dateCreated']),
+      messageIndex: map['messageIndex'],
       hasMedia: map['hasMedia'] ?? false,
       medias: medias,
       attributes: map['attributes'],
+      participant: participant,
     );
 
     return message;
