@@ -44,6 +44,10 @@ abstract class TwilioConversationsPlatform extends PlatformInterface {
     throw UnimplementedError('getConversation() has not been implemented.');
   }
 
+  Future<Map?> getUser(String identity) {
+    throw UnimplementedError('getUser() has not been implemented.');
+  }
+
   Future<int?> getMessagesCount(String sid) {
     throw UnimplementedError('getMessagesCount() has not been implemented.');
   }

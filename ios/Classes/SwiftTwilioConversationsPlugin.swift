@@ -109,6 +109,32 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                     result(nil)
                 }
             }
+        case "getUser":
+            let arguments = call.arguments as! [String: Any]
+            let identity = arguments["identity"] as! String
+            
+            client?.subscribedUser(withIdentity: identity) {(r, user) in
+                if (r.isSuccessful) {
+                    var jsonData: Data? = nil
+                    if (user?.attributes()?.isDictionary ?? false) {
+                        do {
+                            jsonData = try JSONSerialization.data(withJSONObject: user?.attributes()?.dictionary, options: .prettyPrinted)
+                        } catch let error as NSError {
+                            print(error)
+                        }
+                    }
+                    
+                    result([
+                        "identity": user?.identity,
+                        "friendlyName": user?.friendlyName,
+                        "isOnline": user?.isOnline(),
+                        "attributes": jsonData != nil ? String(data: jsonData!,
+                                                               encoding: String.Encoding.ascii) : nil
+                    ])
+                } else {
+                    result(nil)
+                }
+            }
         case "getMessageByIndex":
             let arguments = call.arguments as! [String: Any]
             let sid = arguments["sid"] as! String
@@ -150,6 +176,7 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                                     "sid": message?.sid,
                                     "body": message?.body,
                                     "messageIndex": message?.index,
+                                    "author": message?.author,
                                     "participant.sid": message?.participant?.sid,
                                     "participant.conversationSid": message?.participant?.conversation?.sid,
                                     "participant.identity": message?.participant?.identity,
@@ -289,6 +316,7 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                                     "sid": message.sid,
                                     "body": message.body,
                                     "messageIndex": message.index,
+                                    "author": message.author,
                                     "participant.sid": message.participant?.sid,
                                     "participant.conversationSid": message.participant?.conversation?.sid,
                                     "participant.identity": message.participant?.identity,

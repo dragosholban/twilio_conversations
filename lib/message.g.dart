@@ -23,6 +23,7 @@ _$_Message _$$_MessageFromJson(Map<String, dynamic> json) => _$_Message(
       participant: json['participant'] == null
           ? null
           : Participant.fromJson(json['participant'] as Map<String, dynamic>),
+      author: json['author'] as String?,
     );
 
 Map<String, dynamic> _$$_MessageToJson(_$_Message instance) =>
@@ -36,4 +37,5 @@ Map<String, dynamic> _$$_MessageToJson(_$_Message instance) =>
       'medias': instance.medias,
       'attributes': instance.attributes,
       'participant': instance.participant,
+      'author': instance.author,
     };

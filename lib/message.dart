@@ -19,6 +19,7 @@ class Message with _$Message {
     @Default([]) List<Map<String, String>> medias,
     String? attributes,
     Participant? participant,
+    String? author,
   }) = _Message;
 
   factory Message.fromJson(Map<String, dynamic> json) =>
@@ -53,6 +54,7 @@ class Message with _$Message {
       medias: medias,
       attributes: map['attributes'],
       participant: participant,
+      author: map['author'],
     );
 
     return message;

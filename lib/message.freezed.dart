@@ -29,6 +29,7 @@ mixin _$Message {
   List<Map<String, String>> get medias => throw _privateConstructorUsedError;
   String? get attributes => throw _privateConstructorUsedError;
   Participant? get participant => throw _privateConstructorUsedError;
+  String? get author => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -48,7 +49,8 @@ abstract class $MessageCopyWith<$Res> {
       bool hasMedia,
       List<Map<String, String>> medias,
       String? attributes,
-      Participant? participant});
+      Participant? participant,
+      String? author});
 
   $ParticipantCopyWith<$Res>? get participant;
 }
@@ -72,6 +74,7 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
     Object? medias = freezed,
     Object? attributes = freezed,
     Object? participant = freezed,
+    Object? author = freezed,
   }) {
     return _then(_value.copyWith(
       sid: sid == freezed
@@ -110,6 +113,10 @@ class _$MessageCopyWithImpl<$Res> implements $MessageCopyWith<$Res> {
           ? _value.participant
           : participant // ignore: cast_nullable_to_non_nullable
               as Participant?,
+      author: author == freezed
+          ? _value.author
+          : author // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 
@@ -140,7 +147,8 @@ abstract class _$$_MessageCopyWith<$Res> implements $MessageCopyWith<$Res> {
       bool hasMedia,
       List<Map<String, String>> medias,
       String? attributes,
-      Participant? participant});
+      Participant? participant,
+      String? author});
 
   @override
   $ParticipantCopyWith<$Res>? get participant;
@@ -166,6 +174,7 @@ class __$$_MessageCopyWithImpl<$Res> extends _$MessageCopyWithImpl<$Res>
     Object? medias = freezed,
     Object? attributes = freezed,
     Object? participant = freezed,
+    Object? author = freezed,
   }) {
     return _then(_$_Message(
       sid: sid == freezed
@@ -204,6 +213,10 @@ class __$$_MessageCopyWithImpl<$Res> extends _$MessageCopyWithImpl<$Res>
           ? _value.participant
           : participant // ignore: cast_nullable_to_non_nullable
               as Participant?,
+      author: author == freezed
+          ? _value.author
+          : author // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -220,7 +233,8 @@ class _$_Message extends _Message {
       this.hasMedia = false,
       final List<Map<String, String>> medias = const [],
       this.attributes,
-      this.participant})
+      this.participant,
+      this.author})
       : _medias = medias,
         super._();
 
@@ -252,10 +266,12 @@ class _$_Message extends _Message {
   final String? attributes;
   @override
   final Participant? participant;
+  @override
+  final String? author;
 
   @override
   String toString() {
-    return 'Message(sid: $sid, body: $body, lastMessageDate: $lastMessageDate, dateCreated: $dateCreated, messageIndex: $messageIndex, hasMedia: $hasMedia, medias: $medias, attributes: $attributes, participant: $participant)';
+    return 'Message(sid: $sid, body: $body, lastMessageDate: $lastMessageDate, dateCreated: $dateCreated, messageIndex: $messageIndex, hasMedia: $hasMedia, medias: $medias, attributes: $attributes, participant: $participant, author: $author)';
   }
 
   @override
@@ -276,7 +292,8 @@ class _$_Message extends _Message {
             const DeepCollectionEquality()
                 .equals(other.attributes, attributes) &&
             const DeepCollectionEquality()
-                .equals(other.participant, participant));
+                .equals(other.participant, participant) &&
+            const DeepCollectionEquality().equals(other.author, author));
   }
 
   @JsonKey(ignore: true)
@@ -291,7 +308,8 @@ class _$_Message extends _Message {
       const DeepCollectionEquality().hash(hasMedia),
       const DeepCollectionEquality().hash(_medias),
       const DeepCollectionEquality().hash(attributes),
-      const DeepCollectionEquality().hash(participant));
+      const DeepCollectionEquality().hash(participant),
+      const DeepCollectionEquality().hash(author));
 
   @JsonKey(ignore: true)
   @override
@@ -316,7 +334,8 @@ abstract class _Message extends Message {
       final bool hasMedia,
       final List<Map<String, String>> medias,
       final String? attributes,
-      final Participant? participant}) = _$_Message;
+      final Participant? participant,
+      final String? author}) = _$_Message;
   const _Message._() : super._();
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$_Message.fromJson;
@@ -339,6 +358,8 @@ abstract class _Message extends Message {
   String? get attributes;
   @override
   Participant? get participant;
+  @override
+  String? get author;
   @override
   @JsonKey(ignore: true)
   _$$_MessageCopyWith<_$_Message> get copyWith =>

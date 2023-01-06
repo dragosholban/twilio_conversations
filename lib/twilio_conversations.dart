@@ -2,6 +2,7 @@ import 'package:twilio_conversations/conversation.dart';
 import 'package:twilio_conversations/conversation_api.dart';
 import 'package:twilio_conversations/message.dart';
 import 'package:twilio_conversations/participant_api.dart';
+import 'package:twilio_conversations/user.dart';
 
 import 'twilio_conversations_platform_interface.dart';
 
@@ -50,6 +51,18 @@ class TwilioConversations {
     );
 
     return conversation;
+  }
+
+  Future<User?> getUser(String identity) async {
+    final data = await TwilioConversationsPlatform.instance.getUser(identity);
+
+    if (data != null) {
+      final user = User.fromJson(Map<String, dynamic>.from(data));
+
+      return user;
+    }
+
+    return null;
   }
 
   Future<Message?> getMessageByIndex(String sid, int index) async {

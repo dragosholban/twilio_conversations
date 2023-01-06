@@ -191,6 +191,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                                     "body" to it.body,
                                                     "messageIndex" to it.messageIndex,
                                                     "dateCreated" to it.dateCreated,
+                                                    "author" to it.author,
                                                     "participant.sid" to it.participant?.sid,
                                                     "participant.conversationSid" to it.participant?.conversation?.sid,
                                                     "participant.identity" to it.participant?.identity,
@@ -321,6 +322,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                             "body" to it.body,
                                             "messageIndex" to it.messageIndex,
                                             "dateCreated" to it.dateCreated,
+                                            "author" to it.author,
                                             "participant.sid" to it.participant?.sid,
                                             "participant.conversationSid" to it.participant?.conversation?.sid,
                                             "participant.identity" to it.participant?.identity,
@@ -482,6 +484,29 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                         } catch (e: Exception) {
                             Log.d(TAG, "participant.getUser: ${e.message}")
                             result.error("participant.getUser", e.message, "");
+                        }
+                    }
+                }
+            }
+            "getUser" -> {
+                val identity = call.argument<String>("identity") ?: ""
+
+                mainScope.launch {
+                    withContext(Dispatchers.IO) {
+                        try {
+                            conversationsClient?.getAndSubscribeUser(identity) {
+                                result.success(
+                                    hashMapOf<String, Any?>(
+                                        "identity" to it.identity,
+                                        "friendlyName" to it.friendlyName,
+                                        "attributes" to it.attributes.toString(),
+                                        "isOnline" to it.isOnline,
+                                    )
+                                )
+                            }
+                        } catch (e: Exception) {
+                            Log.d(TAG, "getUser: ${e.message}")
+                            result.error("getUser", e.message, "");
                         }
                     }
                 }
