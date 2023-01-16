@@ -53,8 +53,8 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                         "identity": self.client?.user?.identity,
                     ])
                 }
-                result(initResult.isSuccessful)
             }
+            result(true)
         case "shutdown":
             client?.shutdown()
             SwiftTwilioConversationsPlugin.conversationListeners.removeAll()

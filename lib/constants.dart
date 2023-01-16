@@ -1,6 +1,7 @@
 enum ClientSyncStatus { started, listCompleted, completed, failed }
 
 abstract class ConversationEvents {
+  static const String clientCreated = 'clientCreated';
   static const String clientSynchronizationStatusUpdated =
       'clientSynchronizationStatusUpdated';
   static const String conversationAdded = 'conversationAdded';

@@ -78,6 +78,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                 }
                 conversationListeners.clear()
                 ConversationsClient.create(context, token, props, mConversationsClientCallback)
+                result.success(true)
             }
             "shutdown" -> {
                 try {
@@ -530,11 +531,6 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                 )
                 conversationsClient.addListener(this@TwilioConversationsPlugin.mConversationsClientListener)
                 Log.d(TAG, "Success creating Twilio Conversations Client")
-                try {
-                    this@TwilioConversationsPlugin.result?.success(true)
-                } catch (e: Exception) {
-                    Log.e(TAG, e.message ?: "")
-                }
             }
 
             override fun onError(errorInfo: ErrorInfo) {
