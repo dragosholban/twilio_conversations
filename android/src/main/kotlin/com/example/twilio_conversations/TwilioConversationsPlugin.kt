@@ -80,6 +80,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                 ConversationsClient.create(context, token, props, mConversationsClientCallback)
                 result.success(true)
             }
+
             "shutdown" -> {
                 try {
                     conversationsClient?.removeAllListeners()
@@ -90,6 +91,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                 conversationListeners.clear()
                 result.success(true)
             }
+
             "myConversations" -> {
                 val conversations = emptyList<HashMap<String, Any?>>().toMutableList()
                 try {
@@ -121,6 +123,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
                 result.success(conversations)
             }
+
             "getConversation" -> {
                 val sid = call.argument<String>("sid") ?: ""
 
@@ -160,6 +163,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+
             "getMessageByIndex" -> {
                 val sid = call.argument<String>("sid") ?: ""
                 val index = call.argument<Int>("index")
@@ -214,6 +218,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+
             "getMessagesCount" -> {
                 val sid = call.argument<String>("sid") ?: ""
 
@@ -232,6 +237,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+
             "getUnreadMessagesCount" -> {
                 val sid = call.argument<String>("sid") ?: ""
 
@@ -249,6 +255,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+
             "getConversationUserIsOnline" -> {
                 val sid = call.argument<String>("sid") ?: ""
 
@@ -273,6 +280,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+
             "setAllMessagesRead" -> {
                 val sid = call.argument<String>("sid") ?: ""
 
@@ -291,6 +299,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+
             "getMessages" -> {
                 val sid = call.argument<String>("sid") ?: ""
 
@@ -343,6 +352,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+
             "getTemporaryContentUrlForMediaSid" -> {
                 val sid = call.argument<String>("sid") ?: ""
 
@@ -363,6 +373,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+
             "sendMessage" -> {
                 val sid = call.argument<String>("conversationSid") ?: ""
                 val text = call.argument<String?>("text")
@@ -402,6 +413,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+
             "typing" -> {
                 val sid = call.argument<String>("sid") ?: ""
 
@@ -418,6 +430,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+
             "registerFCMToken" -> {
                 val token = call.argument<String>("token") ?: ""
 
@@ -428,6 +441,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     result.error("registerFCMToken", e.message, "");
                 }
             }
+
             "conversation.getParticipantsList" -> {
                 val sid = call.argument<String>("sid") ?: ""
 
@@ -455,6 +469,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+
             "participant.getUser" -> {
                 val conversationSid = call.argument<String>("conversationSid") ?: ""
                 val participantSid = call.argument<String>("participantSid")
@@ -489,6 +504,7 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+
             "getUser" -> {
                 val identity = call.argument<String>("identity") ?: ""
 
@@ -512,13 +528,54 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     }
                 }
             }
+
+            "setAttributeForMessage" -> {
+                val conversationSid = call.argument<String>("conversationSid")
+                val messageIndex = call.argument<Int>("messageIndex")
+                val attributeName = call.argument<String>("attributeName")
+                val attributeValue = call.argument<Any>("attributeValue")
+
+                conversationSid?.let { conversationSid ->
+                    messageIndex?.let { messageIndex ->
+                        attributeName?.let { attributeName ->
+                            attributeValue?.let { attributeValue ->
+                                mainScope.launch {
+                                    withContext(Dispatchers.IO) {
+                                        try {
+                                            conversationsClient?.getConversation(conversationSid) { conversation ->
+                                                conversation.getMessageByIndex(messageIndex.toLong()) { message ->
+                                                    val attributes =
+                                                        message.attributes.jsonObject?.put(
+                                                            attributeName,
+                                                            attributeValue
+                                                        )
+                                                    attributes?.let { Attributes(it) }?.let {
+                                                        message.setAttributes(it) {
+                                                            result.success(true)
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } catch (e: Exception) {
+                                            Log.d(TAG, "setAttributeForMessage: ${e.message}")
+                                            result.error("setAttributeForMessage", e.message, "");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             else -> {
                 result.notImplemented()
             }
         }
     }
 
-    private val mConversationsClientCallback: CallbackListener<ConversationsClient> =
+    private val mConversationsClientCallback
+            : CallbackListener<ConversationsClient> =
         object : CallbackListener<ConversationsClient> {
             override fun onSuccess(conversationsClient: ConversationsClient) {
                 this@TwilioConversationsPlugin.conversationsClient = conversationsClient
@@ -542,7 +599,8 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
             }
         }
 
-    private val mConversationsClientListener: ConversationsClientListener =
+    private val mConversationsClientListener
+            : ConversationsClientListener =
         object : ConversationsClientListener {
             override fun onConversationAdded(conversation: Conversation?) {
                 conversationsStreamHandler.sink?.success(
@@ -653,7 +711,9 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
             }
         }
 
-    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onDetachedFromEngine(
+        @NonNull binding: FlutterPlugin.FlutterPluginBinding
+    ) {
         channel.setMethodCallHandler(null)
     }
 
@@ -673,7 +733,11 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
     }
 
-    private fun dateToString(date: Date?): String? {
+    private fun dateToString(
+        date: Date?
+    )
+            : String
+    ? {
         if (date == null) return null
         val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
         return dateFormat.format(date)

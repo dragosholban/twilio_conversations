@@ -478,6 +478,43 @@ public class SwiftTwilioConversationsPlugin: NSObject, FlutterPlugin, TwilioConv
                 }
             }
             
+        case "setAttributeForMessage":
+            let arguments = call.arguments as! [String: Any]
+            let conversationSid = arguments["conversationSid"] as! String
+            let messageIndex = arguments["messageIndex"] as! Int
+            let attributeName = arguments["attributeName"] as! String
+            let attributeValue = arguments["attributeValue"]
+            
+            client?.conversation(withSidOrUniqueName: conversationSid) {(r, conversation) in
+                if (r.isSuccessful) {
+                    if (conversation?.synchronizationStatus == TCHConversationSynchronizationStatus.all) {
+                        conversation?.message(withIndex: NSNumber(value: messageIndex)) { (r, message) in
+                            if(r.isSuccessful) {
+                                var attributes = message?.attributes()?.dictionary
+                                attributes?[attributeName] = attributeValue
+                                if let attributes = attributes {
+                                    message?.setAttributes(TCHJsonAttributes(dictionary: attributes)) { r in
+                                        if (r.isSuccessful) {
+                                            result(true)
+                                        } else {
+                                            result(nil)
+                                        }
+                                    }
+                                } else {
+                                    result(nil)
+                                }
+                            } else {
+                                result(nil)
+                            }
+                        }
+                    } else {
+                        result(nil)
+                
+                    }
+                } else {
+                    result(nil)
+                }
+            }
         default:
             result(FlutterMethodNotImplemented)
         }

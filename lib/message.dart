@@ -64,4 +64,18 @@ class Message with _$Message {
     return TwilioConversationsPlatform.instance
         .getTemporaryContentUrlForMediaSid(sid);
   }
+
+  Future setAttribute(
+    String conversationSid,
+    int messageIndex,
+    String attributeName,
+    dynamic attributeValue,
+  ) {
+    return TwilioConversationsPlatform.instance.setAttributeForMessage(
+      conversationSid,
+      messageIndex,
+      attributeName,
+      attributeValue,
+    );
+  }
 }

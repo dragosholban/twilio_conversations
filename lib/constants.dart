@@ -10,4 +10,5 @@ abstract class ConversationEvents {
   static const String userUpdated = 'userUpdated';
   static const String typingStarted = 'typingStarted';
   static const String typingEnded = 'typingEnded';
+  static const String messageUpdated = 'messageUpdated';
 }

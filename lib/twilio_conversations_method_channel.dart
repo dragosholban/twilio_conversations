@@ -86,6 +86,21 @@ class MethodChannelTwilioConversations extends TwilioConversationsPlatform {
   }
 
   @override
+  Future setAttributeForMessage(
+    String conversationSid,
+    int messageIndex,
+    String attributeName,
+    dynamic attributeValue,
+  ) async {
+    return await methodChannel.invokeMethod('setAttributeForMessage', {
+      'conversationSid': conversationSid,
+      'messageIndex': messageIndex,
+      'attributeName': attributeName,
+      'attributeValue': attributeValue,
+    });
+  }
+
+  @override
   Future<List?> getMessages(String sid) async {
     return methodChannel.invokeListMethod('getMessages', {
       'sid': sid,

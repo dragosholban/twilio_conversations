@@ -111,4 +111,14 @@ abstract class TwilioConversationsPlatform extends PlatformInterface {
       String conversationSid, String participantSid) {
     throw UnimplementedError('getUser() has not been implemented.');
   }
+
+  Future setAttributeForMessage(
+    String conversationSid,
+    int messageIndex,
+    String attributeName,
+    dynamic attributeValue,
+  ) {
+    throw UnimplementedError(
+        'setAttibuteForMessage() has not been implemented.');
+  }
 }
