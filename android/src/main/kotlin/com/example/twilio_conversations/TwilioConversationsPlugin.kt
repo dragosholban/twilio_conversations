@@ -68,28 +68,30 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
 
         when (call.method) {
             "initClient" -> {
-                val token = call.argument<String>("token") ?: ""
-                val props = ConversationsClient.Properties.newBuilder().createProperties()
                 try {
+                    val token = call.argument<String>("token") ?: ""
+                    val props = ConversationsClient.Properties.newBuilder().createProperties()
                     conversationsClient?.removeAllListeners()
                     conversationsClient?.shutdown()
+                    conversationListeners.clear()
+                    ConversationsClient.create(context, token, props, mConversationsClientCallback)
+                    result.success(true)
                 } catch (e: Exception) {
-                    Log.d(TAG, "initClient shutdown: ${e.message}")
+                    Log.d(TAG, "initClient: ${e.message}")
+                    result.error("initClient", e.message, "")
                 }
-                conversationListeners.clear()
-                ConversationsClient.create(context, token, props, mConversationsClientCallback)
-                result.success(true)
             }
 
             "shutdown" -> {
                 try {
                     conversationsClient?.removeAllListeners()
                     conversationsClient?.shutdown()
+                    conversationListeners.clear()
+                    result.success(true)
                 } catch (e: Exception) {
                     Log.d(TAG, "shutdown: ${e.message}")
+                    result.error("shutdown", e.message, "")
                 }
-                conversationListeners.clear()
-                result.success(true)
             }
 
             "myConversations" -> {
@@ -595,7 +597,6 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                     TAG,
                     "Error creating Twilio Conversations Client: " + errorInfo.message
                 )
-                this@TwilioConversationsPlugin.result?.success(false)
             }
         }
 
