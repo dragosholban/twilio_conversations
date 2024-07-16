@@ -69,10 +69,14 @@ class TwilioConversationsPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
         when (call.method) {
             "initClient" -> {
                 try {
-                    val token = call.argument<String>("token") ?: ""
-                    val props = ConversationsClient.Properties.newBuilder().createProperties()
                     conversationsClient?.removeAllListeners()
                     conversationsClient?.shutdown()
+                } catch (e: Exception) {
+                    Log.d(TAG, "initClient shutdown: ${e.message}")
+                }
+                try {
+                    val token = call.argument<String>("token") ?: ""
+                    val props = ConversationsClient.Properties.newBuilder().createProperties()
                     conversationListeners.clear()
                     ConversationsClient.create(context, token, props, mConversationsClientCallback)
                     result.success(true)

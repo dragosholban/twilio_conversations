@@ -46,5 +46,5 @@ android {
 }
 
 dependencies {
-    implementation 'com.twilio:conversations-android:4.0.2'
+    implementation 'com.twilio:conversations-android:6.0.4'
 }
